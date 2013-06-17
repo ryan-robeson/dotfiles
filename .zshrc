@@ -36,24 +36,7 @@ export GOPATH=$HOME/Code/go
 export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/usr/texbin:$GOPATH/bin:/Applications/Racket\ v5.3.3/bin
 export EDITOR=/usr/bin/vim
 
-[[ -s "/Users/ryan/.rvm/scripts/rvm" ]] && source "/Users/ryan/.rvm/scripts/rvm"
-
 source $ZSH/oh-my-zsh.sh
-
-source ~/Code/uploadToGoogleDocs/upload2gdocs.sh
-source ~/Code/railsProjects/RailsPre/check_aps/check_aps.sh
-#source ~/Code/evernote_scripture/shell_function.sh
-
-function validate_html() {
-  current_directory=`pwd`
-  cd $HOME/Code/xhtml_validator
-  thor validate:all $current_directory
-  cd $current_directory
-}
-
-function sync_music_to_server {
-  rsync -essh -av /Volumes/RyanRobesonMedia/Music/iTunes/iTunes\ Media/Music/* ryan@server:SharedThings/Music/
-}
 
 function wakeup_server {
   ssh -p1022 root@ryansconnect2home.bounceme.net '/usr/bin/ether-wake 00:26:b9:15:92:e9'
