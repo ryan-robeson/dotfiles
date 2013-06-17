@@ -33,7 +33,7 @@ plugins=(git rails ruby bundler)
 
 # Customize to your needs...
 export GOPATH=$HOME/Code/go
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/usr/texbin:$GOPATH/bin:/Applications/Racket\ v5.3.3/bin
+export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/usr/texbin:$GOPATH/bin
 export EDITOR=/usr/bin/vim
 
 source $ZSH/oh-my-zsh.sh
