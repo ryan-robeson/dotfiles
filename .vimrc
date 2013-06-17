@@ -1,5 +1,5 @@
 set nocompatible
-set filetype off
+filetype off
 
 " Setting up Vundle - the vim plugin bundler
     let iCanHazVundle=1
