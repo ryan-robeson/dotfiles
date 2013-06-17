@@ -15,8 +15,8 @@ filetype off
     call vundle#rc()
     Bundle 'gmarik/vundle'
     "Add your bundles here
-    Bundle 'tpope/fugitive'
-    Bundle 'kien/ctrlp'
+    Bundle 'tpope/vim-fugitive'
+    Bundle 'kien/ctrlp.vim'
     Bundle 'tpope/vim-surround'
     Bundle 'mattn/zencoding-vim'
     "...All your other bundles...
