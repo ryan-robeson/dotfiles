@@ -1,0 +1,7 @@
+[user]
+	name = Ryan Robeson
+	email = ryan.robeson@gmail.com
+[color]
+	ui = auto
+[push]
+	default = simple
