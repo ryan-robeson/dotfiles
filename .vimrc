@@ -19,6 +19,7 @@ filetype off
     Bundle 'kien/ctrlp.vim'
     Bundle 'tpope/vim-surround'
     Bundle 'mattn/zencoding-vim'
+    Bundle 'airblade/vim-gitgutter'
     "...All your other bundles...
     if iCanHazVundle == 0
         echo "Installing Bundles, please ignore key map error messages"
