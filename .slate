@@ -63,12 +63,12 @@ bind up:ctrl;alt;cmd    throw up    resize
 bind down:ctrl;alt;cmd  throw down  resize
 
 # Focus Bindings
-bind l:shift;cmd  focus right
-bind h:shift;cmd  focus left
-bind up:cmd       focus up
-bind down:cmd     focus down
-bind up:cmd;alt   focus behind
-bind down:cmd;alt focus behind
+# bind l:shift;cmd  focus right
+# bind h:shift;cmd  focus left
+# bind up:cmd       focus up
+# bind down:cmd     focus down
+# bind up:cmd;alt   focus behind
+# bind down:cmd;alt focus behind
 
 # Window Hints
 #bind esc:cmd hint ASDFQWERTZXCVJKL;YUIOPNM,.
