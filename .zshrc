@@ -32,22 +32,5 @@ ZSH_THEME="gnzh"
 plugins=(git rails ruby bundler)
 
 # Customize to your needs...
-export GOPATH=$HOME/Code/go
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/usr/texbin:$GOPATH/bin
-export EDITOR=/usr/bin/vim
-
 source $ZSH/oh-my-zsh.sh
-
-function wakeup_server {
-  ssh -p1022 root@ryansconnect2home.bounceme.net '/usr/bin/ether-wake 00:26:b9:15:92:e9'
-}
-
-function poweroff_server {
-  ssh ryan@server 'sudo poweroff'
-}
-
-function update_xbmc_library {
-  curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://localhost:8080/jsonrpc
-}
-
-[ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh
+[-f $HOME/.zsh-mac.sh ] && source $HOME/.zsh-mac.sh
