@@ -33,4 +33,5 @@ plugins=(git rails ruby bundler)
 
 # Customize to your needs...
 source $ZSH/oh-my-zsh.sh
+[ -f $HOME/bin/tmuxinator.zsh ] && source $HOME/bin/tmuxinator.zsh
 [ -f $HOME/.zsh-mac.sh ] && source $HOME/.zsh-mac.sh
