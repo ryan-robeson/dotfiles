@@ -3,14 +3,47 @@ export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bi
 export PATH=/usr/local/heroku/bin:$PATH
 export EDITOR=/usr/bin/vim
 
-function wakeup_server {
-  ssh -p1022 root@ryansconnect2home.bounceme.net '/usr/bin/ether-wake 00:26:b9:15:92:e9'
-}
-
-function poweroff_server {
-  ssh ryan@server 'sudo poweroff'
-}
-
 function update_xbmc_library {
   curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://localhost:8080/jsonrpc
+}
+
+function ansible_digital_ocean_api_options {
+  endpoints=(sizes regions images ssh_keys)
+  for i in "${endpoints[@]}"; do
+    url=`printf "https://api.digitalocean.com/%s/?client_id=%s&api_key=%s" $i $DO_CLIENT_ID $DO_API_KEY`
+    curl -s $url | python -mjson.tool
+  done
+}
+
+# Open a sublime-project in the current directory
+function sublp {
+  command -v subl >/dev/null 2>&1 || { echo "subl not found. Cannot continue." >&2; return 1; }
+
+  if [ -n "$(find . -maxdepth 1 -name '*.sublime-project' -print -quit 2>&1)" ]; then
+    echo Found project file. Opening...
+    subl --project *.sublime-project
+  else
+    echo "No sublime project file found. Aborting..." >&2
+    return 1
+  fi
+}
+
+# Create a new Bootstrap HTML page at the given page. Mainly for quick testing
+function new_bs_temp {
+  bsfile="$HOME/Dropbox/code/templates/bootstrap-3.2-basic.html"
+  if [ -f "$bsfile" ]; then
+    if [ ! -f "$1" ]; then
+      echo "Creating bootstrap html document at: $1"
+      cp -n "$bsfile" "$1"
+    else
+      echo "File $1 exists. Not overwriting."
+      echo "Exiting..."
+      return 1
+    fi
+  else
+    echo "Could not find bootstrap template file at $bsfile."
+    echo "Exiting..."
+    return 1
+  fi
+  return 0
 }

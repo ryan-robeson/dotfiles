@@ -16,11 +16,12 @@ filetype off
     Bundle 'gmarik/vundle'
     "Add your bundles here
     Bundle 'tpope/vim-fugitive'
-    Bundle 'kien/ctrlp.vim'
+    Bundle 'ctrlpvim/ctrlp.vim'
     Bundle 'tpope/vim-surround'
     Bundle 'mattn/zencoding-vim'
     Bundle 'airblade/vim-gitgutter'
     Bundle 'scrooloose/syntastic'
+    Bundle 'oranget/vim-csharp'
     "...All your other bundles...
     if iCanHazVundle == 0
         echo "Installing Bundles, please ignore key map error messages"
@@ -48,6 +49,7 @@ set incsearch
 :au BufWinEnter ?* silent loadview
 
 :autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby
+:autocmd BufEnter *.md set filetype=markdown
 :autocmd BufEnter *.py set softtabstop=4 tabstop=4 shiftwidth=4 
 :autocmd BufEnter *.pl set softtabstop=4 tabstop=4 shiftwidth=4 
 :autocmd BufEnter *.html,*.htm set softtabstop=4 tabstop=4 shiftwidth=4 
