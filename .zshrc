@@ -34,4 +34,5 @@ plugins=(git rails ruby bundler vagrant osx docker)
 # Customize to your needs...
 source $ZSH/oh-my-zsh.sh
 [ -f $HOME/bin/tmuxinator.zsh ] && source $HOME/bin/tmuxinator.zsh
-[ -f $HOME/.zsh-mac.sh ] && source $HOME/.zsh-mac.sh
+[ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+[ -f $HOME/.api-keys ] && source $HOME/.api-keys
