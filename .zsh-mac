@@ -1,0 +1,33 @@
+export DISABLE_AUTO_TITLE=true
+[ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh
+alias ql='qlmanage -p'
+
+# Setup Docker
+$(boot2docker shellinit 2>/dev/null)
+
+function view_applescript_interface_items_for {
+  # Adapted from http://hints.macworld.com/article.php?story=20111208191312748
+  # Useful for finding items that can be scripted with System Events in 
+  # AppleScript.
+  osascript <<-eos | perl -pe '$_ =~ s/, /\n/g' 
+  set appname to "$1" -------------------------- Set this to the App you want to look at
+
+  set winstuff to "defaultval"
+  set menustuff to "defaultval"
+
+  tell application appname
+    activate
+  end tell
+
+  tell application "System Events"
+    tell process appname
+      set winstuff to entire contents of front window
+      set menustuff to entire contents of menu bar 1
+    end tell
+  end tell
+  return winstuff & menustuff -- comment this out to get just winstuff
+  --return winstuff -- comment this out too to get just menustuff
+  --return menustuff 
+eos
+}
+
