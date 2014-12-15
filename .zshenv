@@ -47,3 +47,17 @@ function new_bs_temp {
   fi
   return 0
 }
+
+# Output MIT license file content to be piped to a file.
+# Usage: mit_license                   # Prints the license with the current year
+#                                        and my name.
+#        mit_license 2018              # Specifying year
+#        mit_license 2018 Ryan Robeson # Specifying year and name
+function mit_license {
+  ruby -rerb -rDate <<-eos
+    @year = "${1}".empty? ? nil : "${1}"
+    @name = "${2}".empty? ? nil : "${2}"
+    b = binding
+    puts ERB.new(File.read("#{Dir.home}/Dropbox/code/templates/mit-license.txt.erb")).run b
+eos
+}

@@ -44,6 +44,7 @@ set smartindent
 set ignorecase
 set smartcase
 set incsearch
+set backspace=indent,eol,start
 
 :au BufWinLeave ?* mkview
 :au BufWinEnter ?* silent loadview
