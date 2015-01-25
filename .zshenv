@@ -61,3 +61,10 @@ function mit_license {
     puts ERB.new(File.read("#{Dir.home}/Dropbox/code/templates/mit-license.txt.erb")).run b
 eos
 }
+
+# Wakes up one of my dev machines.
+# Usage: outsider_wakeup
+function outsider_wakeup {
+  echo "Waking up Outsider..."
+  wakeonlan -i 192.168.116.255 44:8a:5b:c9:19:ef
+}
