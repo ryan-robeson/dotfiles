@@ -22,6 +22,7 @@ filetype off
     Bundle 'airblade/vim-gitgutter'
     Bundle 'scrooloose/syntastic'
     Bundle 'oranget/vim-csharp'
+    Bundle 'kovisoft/slimv'
     "...All your other bundles...
     if iCanHazVundle == 0
         echo "Installing Bundles, please ignore key map error messages"
