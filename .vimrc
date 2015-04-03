@@ -12,6 +12,7 @@ filetype off
         let iCanHazVundle=0
     endif
     set rtp+=~/.vim/bundle/vundle/
+
     call vundle#rc()
     Bundle 'gmarik/vundle'
     "Add your bundles here
@@ -64,5 +65,11 @@ map <C-H> <C-W>h
 map <C-K> <C-W>k
 map <C-L> <C-W>l
 
-"vim-slime
-let g:slime_target = "tmux"
+"omnifunc
+set omnifunc=syntaxcomplete#Complete
+
+"Slimv
+"Declare the default leader so we can use it below
+let g:slimv_leader = ','
+"ctag support. (N) sets up NULL_GLOB so zsh doesn't complain
+let g:slimv_ctags = '$HOMEBREW_ROOT/bin/ctags -a --language-force=lisp *.lisp(N) *.clj(N)' 

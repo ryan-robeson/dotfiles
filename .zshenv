@@ -3,6 +3,11 @@ export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bi
 export PATH=/usr/local/heroku/bin:$PATH
 export EDITOR=/usr/bin/vim
 
+# Source mac environment settings if available.
+[ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+
+alias gloga='git log --decorate --oneline --graph --all'
+
 function update_xbmc_library {
   curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://localhost:8080/jsonrpc
 }
