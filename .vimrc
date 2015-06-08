@@ -48,6 +48,9 @@ set smartcase
 set incsearch
 set backspace=indent,eol,start
 
+" Printer options
+set printoptions=left:5pc,header:0
+
 :au BufWinLeave ?* mkview
 :au BufWinEnter ?* silent loadview
 
