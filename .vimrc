@@ -19,7 +19,7 @@ filetype off
     Bundle 'tpope/vim-fugitive'
     Bundle 'ctrlpvim/ctrlp.vim'
     Bundle 'tpope/vim-surround'
-    Bundle 'mattn/zencoding-vim'
+    Bundle 'mattn/emmet-vim'
     Bundle 'airblade/vim-gitgutter'
     Bundle 'scrooloose/syntastic'
     Bundle 'oranget/vim-csharp'
