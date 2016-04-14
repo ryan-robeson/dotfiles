@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+
+# Copyright © 2016 Ryan Robeson
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+script_name=$(basename $0)
+
+read -rd '' usage << EOL
+Usage: $script_name [ -h ] [ open | close ] [ /path/to/workbook.xlsx | /path/to/input_dir ] [ /path/to/output_dir | /path/to/output.xlsx ]
+
+$script_name allows you to modify the XML contents that make up an Excel (or PowerPoint, or Word) document
+by extracting it's contents with the open command, and reconstructing the file with the
+close command.
+
+When opening a document, the output directory argument is optional.
+It is required; however, when reconstructing a document.
+
+Examples:
+
+# Extract an Excel file
+#
+# workbook_dir can be omitted and the directory name will be
+# taken from the filename.
+$script_name open workbook.xlsx workbook_dir
+
+# Reconstruct an Excel file
+#
+# workbook.xlsx cannot be omitted.
+$script_name close workbook_dir workbook.xlsx
+EOL
+
+{ (( "$#" < 2 || "$#" > 3 )) || [ "$1" == '-h' ]; } && { echo -e "$usage\n" >&2; exit 1; } 
+
+function open_document() {
+  case "$#" in
+    2)
+      input_file=$1
+      output_dir=$2
+      ;;
+    1)
+      input_file=$1
+      output_dir=$(sed -E 's/\.(xls|doc|ppt)(x|m)//' <<< "$input_file")
+      ;;
+    *)
+      # 1 or 2 arguments must be passed to this function.
+      # No more, no less.
+      return 1
+      ;;
+  esac
+
+  if [ "$input_file" == "$output_dir" ]; then
+    {
+      echo "Input file and Output directory should not be the same."
+      echo "===================="
+      echo "input file: $input_file"
+      echo "output directory: $output_dir"
+      echo "===================="
+    } >&2
+    return 1
+  fi
+
+  if [ ! -e "$input_file" ]; then
+    echo "Input file ('$input_file') does not exist." >&2
+    return 1
+  fi
+
+  if [ -d "$output_dir" ]; then
+    echo "Output directory ('$output_dir') exists. Remove it first." >&2
+    return 1
+  fi
+
+  echo "Extracting '$input_file' to '$output_dir'..." >&2
+  
+  unzip -q -d "$output_dir" "$input_file" >/dev/null 2>&1 || return 1
+
+  return 0
+}
+
+function close_document() {
+  case "$#" in
+    2)
+      input_dir=$1
+      if [[ "$2" = /* ]]; then
+        # Use as-is for absolute paths
+        output_file=$2
+      else
+        # Convert relative path to absolute
+        output_file="$(pwd)/$2"
+      fi
+      ;;
+    *)
+      # 2 arguments required.
+      # No more, no less.
+      return 1
+      ;;
+  esac
+
+  if [ "$input_dir" == "$output_file" ]; then
+    {
+      echo "Input directory and Output file should not be the same."
+      echo "===================="
+      echo "input directory: $input_dir"
+      echo "output file: $output_file"
+      echo "===================="
+    } >&2
+    return 1
+  fi
+
+  if [ ! -d "$input_dir" ]; then
+    echo "Input directory ('$input_dir') does not exist." >&2
+    return 1
+  fi
+
+  if [ -e "$output_file" ]; then
+    echo "Output file ('$output_file') exists. Remove it first." >&2
+    return 1
+  fi
+
+  echo "Creating '$output_file' from '$input_dir'..." >&2
+
+  ( cd "$input_dir"; zip -q -r "$output_file" *; ) || return 1
+
+  return 0
+}
+
+case "$1" in
+  "o" | "open")
+    shift
+    open_document "$@"
+    if [ "$?" -ne 0 ]; then
+      echo 'Something went wrong opening the document. Sorry.' >&2
+      exit 1
+    fi
+    ;;
+  "c" | "close")
+    shift
+    (( "$#" != 2 )) && { echo You must specify an input directory and output file. >&2; exit 1; }
+
+    close_document "$@"
+
+    if [ "$?" -ne 0 ]; then
+      echo 'Something went wrong creating the document. Sorry.' >&2
+      exit 1
+    fi
+    ;;
+  *)
+    echo 'Invalid argument. Must be "open" or "close".' >&2
+    exit 1
+    ;;
+esac;
+
+echo "Success! Have a nice day!" >&2
