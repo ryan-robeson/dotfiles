@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-network_share="smb://jarjar.dev/ryan-osx-backups-share"
+network_share="smb://dc-jarjar.dev/ryan-osx-backups-share"
 time_machine_bundle="/Volumes/ryan-osx-backups-share/time-machine.sparsebundle"
 time_machine_dir="/Volumes/time-machine-backups"
 

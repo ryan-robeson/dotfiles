@@ -68,8 +68,8 @@ eos
 }
 
 # Wakes up one of my dev machines.
-# Usage: outsider_wakeup
-function outsider_wakeup {
-  echo "Waking up Outsider..."
+# Usage: sidious_wakeup
+function sidious_wakeup {
+  echo "Waking up Sidious..."
   wakeonlan -i 192.168.116.255 44:8a:5b:c9:19:ef
 }
