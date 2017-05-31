@@ -1,10 +1,13 @@
 export GOPATH=$HOME/Code/go
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/usr/texbin:$GOPATH/bin
+export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/Library/Tex/texbin:$GOPATH/bin
 export PATH=/usr/local/heroku/bin:$PATH
+
 export EDITOR=/usr/bin/vim
 
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+
+eval "$(nodenv init -)"
 
 alias gloga='git log --decorate --oneline --graph --all'
 
@@ -72,4 +75,49 @@ eos
 function sidious_wakeup {
   echo "Waking up Sidious..."
   wakeonlan -i 192.168.116.255 44:8a:5b:c9:19:ef
+}
+
+function new_self_signed_cert {
+  usage="
+Usage: $0 subjectAltNames [keyName] [certName]
+
+subjectAltNames      The names to set for the SANs (quoted and comma-separated)
+                     'DNS:localhost,DNS:ryans-air'
+
+keyName              The name of the private key file
+                     (default=key.pem)
+
+certName             The name of the cert file
+                     (default=cert.pem)
+"
+
+  if [[ $# -eq 0 || $1 =~ "-?-h.*" ]]; then
+    echo "$usage"
+    return 1
+  fi
+
+  # ZSH idiom for checking command existence.
+  # $commands is an associative array that lists all commands available to ZSH.
+  # $+commands[openssl] says that if commands[openssl] is set, substitute 1, else 0.
+  # See: http://zsh.sourceforge.net/Doc/Release/Expansion.html#Parameter-Expansion
+  # https://unix.stackexchange.com/a/237084
+  # https://www.zsh.org/mla/users/2011/msg00070.html
+  if (( ! $+commands[openssl] )); then
+    echo Could not find openssl. Exiting...
+    return 1
+  fi
+
+  subjectAltNames="$1"
+  keyName="${2:-key.pem}"
+  certName="${3:-cert.pem}"
+  
+  if [[ -f "$keyName" || -f "$certName" ]]; then
+    echo Not overwriting existing key and/or cert.
+    echo Exiting...
+    return 1
+  fi
+
+  openssl req -newkey rsa:2048 -nodes -keyout "$keyName" -x509 -days 365 -out "$certName" -subj "/C=US/ST=Tennessee/O=RR/OU=Dev/CN=localhost" -reqexts SAN -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=$subjectAltNames"))
+
+  echo All done. Have a nice day!
 }
