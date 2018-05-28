@@ -7,7 +7,7 @@ export EDITOR=/usr/bin/vim
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
-eval "$(nodenv init -)"
+(( $+commands[nodenv] )) && eval "$(nodenv init -)"
 
 alias gloga='git log --decorate --oneline --graph --all'
 
