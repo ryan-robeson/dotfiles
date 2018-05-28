@@ -77,6 +77,11 @@ function sidious_wakeup {
   wakeonlan -i 192.168.116.255 44:8a:5b:c9:19:ef
 }
 
+function sidious_sleep {
+  echo "Putting sidious to sleep..."
+  ssh sidious -t sudo systemctl hybrid-sleep
+}
+
 function new_self_signed_cert {
   usage="
 Usage: $0 subjectAltNames [keyName] [certName]

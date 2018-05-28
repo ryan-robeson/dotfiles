@@ -1,5 +1,7 @@
 export DISABLE_AUTO_TITLE=true
+
 [ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh
+
 alias ql='qlmanage -p'
 alias mcjpeg='/opt/boxen/homebrew/Cellar/mozjpeg/HEAD/bin/cjpeg'
 alias mdjpeg='/opt/boxen/homebrew/Cellar/mozjpeg/HEAD/bin/djpeg'
@@ -8,6 +10,10 @@ alias mjpegtrans='/opt/boxen/homebrew/Cellar/mozjpeg/HEAD/bin/jpegtrans'
 # Add Adobe Font Development Tools to PATH
 export FDK_EXE="/Users/ryan/bin/FDK/Tools/osx"
 export PATH=$PATH:$FDK_EXE
+
+# Overwrite brew cask opts set in boxen
+# TODO: fix this properly
+export HOMEBREW_CASK_OPTS=""
 
 function view_applescript_interface_items_for {
   # Adapted from http://hints.macworld.com/article.php?story=20111208191312748

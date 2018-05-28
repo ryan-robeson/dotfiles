@@ -47,11 +47,27 @@ set ignorecase
 set smartcase
 set incsearch
 set backspace=indent,eol,start
+set mouse=n
+set number
+
+" Persistent undo
+if has("persistent_undo")
+  let &undodir = expand("$HOME/.vim/undo")
+  silent call system ('mkdir ' . &undodir)
+  set undofile
+end
+
+" Improved mouse functionality
+if has("mouse_sgr")
+  set ttymouse=sgr
+else
+  set ttymouse=xterm2
+end
 
 " Printer options
 set printoptions=left:5pc,header:0
 
-:au BufWinLeave ?* mkview
+:au BufLeave,BufUnload,BufWinLeave ?* mkview
 :au BufWinEnter ?* silent loadview
 
 :autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby

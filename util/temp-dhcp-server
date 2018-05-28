@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Start a temporary dhcp server (dnsmasq) on the specified interface.
+# Useful for configuring a headless rpi in a pinch for example.
+
+interface=en4
+start=192.168.12.2
+end=192.168.12.10
+
+echo 'Starting temporary dhcp server on $interface using DNSMasq (requires sudo)'
+echo Ctrl-C to stop
+
+sudo dnsmasq -F $start,$end -i $interface -k -R -S 8.8.8.8 --log-dhcp -8 -
