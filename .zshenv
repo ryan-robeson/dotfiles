@@ -4,6 +4,8 @@ export PATH=/usr/local/heroku/bin:$PATH
 
 export EDITOR=/usr/bin/vim
 
+fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
+
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
@@ -122,7 +124,23 @@ certName             The name of the cert file
     return 1
   fi
 
+  # Both -reqexts SAN and -extensions SAN seem to be required
   openssl req -newkey rsa:2048 -nodes -keyout "$keyName" -x509 -days 365 -out "$certName" -subj "/C=US/ST=Tennessee/O=RR/OU=Dev/CN=localhost" -reqexts SAN -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=$subjectAltNames"))
 
   echo All done. Have a nice day!
 }
+
+# Documenting for future automation
+# Underscores are placeholders for real values
+# Generate a self-signed Root CA
+# openssl req -newkey rsa:4096 -keyout $ca.key.pem -x509 -days 3650 -out $ca.crt.pem -subj "/C=US/ST=Tennessee/O=RR/OU=Home/CN=_.ryanrobeson.com"
+
+# Generate key (node)
+# openssl genrsa -out $node.key.pem 2048
+
+# Generate CSR (node)
+# Currently extensions are not copied to certs, so there's no reason to add them here
+# openssl req -new -key $node.key.pem -out $node.csr -subj "/C=US/ST=Tennessee/O=RR/OU=Home/CN=_._.ryanrobeson.com"
+
+# Generate Cert from CSR (node)
+# openssl x509 -req -in $node.csr -CA $ca.crt.pem -CAkey $ca.key.pem -CAcreateserial -out $node.crt.pem -days 730 -sha256 -extfile <(printf subjectAltName=DNS:localhost,DNS:_,DNS:_._.ryanrobeson.com)
