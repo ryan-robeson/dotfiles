@@ -1,6 +1,9 @@
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
+# Change zsh custom dir so upgrades work
+ZSH_CUSTOM=$ZSH/my-custom
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -29,7 +32,9 @@ ZSH_THEME="gnzh"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git rails ruby bundler vagrant osx docker)
+plugins=(git rails ruby bundler vagrant osx docker osx-bluetooth-keyboard)
+
+DEFAULT_USER="ryan"
 
 # Customize to your needs...
 source $ZSH/oh-my-zsh.sh

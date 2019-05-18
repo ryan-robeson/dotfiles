@@ -18,7 +18,7 @@ if [[ "$OSTYPE" = darwin* ]] ; then
 
   function keyboard_battery_prompt() {
     local kbp=$(keyboard_battery_percentage)
-    local prompt="<$kbp%% ⌨ >"
+    local prompt="$kbp%% ⌨ "
     echo -n "$prompt";
   }
 fi
