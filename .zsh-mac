@@ -15,6 +15,10 @@ export PATH=$PATH:$FDK_EXE
 # TODO: fix this properly
 export HOMEBREW_CASK_OPTS=""
 
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[[ -f ~/.nodenv/versions/8.11.1/lib/node_modules/electron-forge/node_modules/tabtab/.completions/electron-forge.zsh ]] && . ~/.nodenv/versions/8.11.1/lib/node_modules/electron-forge/node_modules/tabtab/.completions/electron-forge.zsh
+
 function view_applescript_interface_items_for {
   # Adapted from http://hints.macworld.com/article.php?story=20111208191312748
   # Useful for finding items that can be scripted with System Events in 

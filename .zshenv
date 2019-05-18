@@ -142,5 +142,5 @@ certName             The name of the cert file
 # Currently extensions are not copied to certs, so there's no reason to add them here
 # openssl req -new -key $node.key.pem -out $node.csr -subj "/C=US/ST=Tennessee/O=RR/OU=Home/CN=_._.ryanrobeson.com"
 
-# Generate Cert from CSR (node)
+# Generate Cert from CSR (CA)
 # openssl x509 -req -in $node.csr -CA $ca.crt.pem -CAkey $ca.key.pem -CAcreateserial -out $node.crt.pem -days 730 -sha256 -extfile <(printf subjectAltName=DNS:localhost,DNS:_,DNS:_._.ryanrobeson.com)
