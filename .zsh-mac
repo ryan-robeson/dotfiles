@@ -45,3 +45,44 @@ function view_applescript_interface_items_for {
 eos
 }
 
+# Unlock the screen from the command line
+# Adapted from: https://apple.stackexchange.com/a/230912
+function unlock_screen {
+  echo -n "Please enter your password: "
+  read -s password
+  osascript <<-eos
+    tell application "System Events"
+      key code 123 -- left arrow wakes the screen
+      delay 0.8 -- wait for the login screen
+      keystroke "$password" -- types the password
+      key code 36 -- Enter - logs in
+    end tell
+eos
+}
+
+# Locking the screen is much easier from 10.13 onward.
+# Remove this check and the extra code after upgrading.
+if [[ ${$(sw_vers -productVersion)%\.[0-9]} -lt '10.13' ]] {
+  # Lock the screen - Workaround since I haven't updated past Sierra yet
+  # https://stackoverflow.com/a/41196453
+  function lock_screen() {
+    echo Locking screen please wait...
+    PATH=/usr/bin:$PATH xcrun swift <<-eos >/dev/null 2>&1
+    import Foundation
+
+    CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x:0.0, y:0.0), mouseButton: .left)!.post(tap: CGEventTapLocation.cghidEventTap)
+eos
+  }
+} else {
+  # Lock the screen
+  # https://apple.stackexchange.com/a/316058
+  # Requires at least 10.13 (High Sierra)
+  function lock_screen {
+    osascript <<-eos
+      activate application "SystemUIServer"
+      tell application "System Events"
+        tell process "SystemUIServer" to keystroke "q" using {command down, control down}
+      end tell
+eos
+  }
+}
