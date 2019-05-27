@@ -5,14 +5,9 @@
 	ui = auto
 [push]
 	default = simple
-
 [credential]
-helper = /opt/boxen/bin/boxen-git-credential
-
-[core]
-	excludesfile = /opt/boxen/config/git/gitignore
-
+  helper = /opt/boxen/bin/boxen-git-credential
 [hub]
-protocol = https
+  protocol = https
 [gpg]
 	program = gpg2
