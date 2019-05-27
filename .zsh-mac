@@ -86,3 +86,8 @@ eos
 eos
   }
 }
+
+# List Brew formula installed by user (installed_on_request)
+function installed_on_request() {
+  brew list | xargs brew info --json | ruby -r json -ne 'j = JSON.parse($_); o = j.reduce([]) { |a, v| a << v["name"] unless v["installed"][0]["installed_on_request"].nil?; a }; puts o.join("\n")'
+}
