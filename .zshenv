@@ -9,7 +9,7 @@ fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
-(( $+commands[nodenv] )) && eval "$(nodenv init -)"
+(( $+commands[nodenv] )) && eval "$(nodenv init - --no-rehash)"
 
 alias gloga='git log --decorate --oneline --graph --all'
 
