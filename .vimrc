@@ -1,6 +1,9 @@
 set nocompatible
 filetype off
 
+"profile start /tmp/gitgutter.log
+"profile! file */vim-gitgutter/*
+
 " Setting up Vundle - the vim plugin bundler
     let iCanHazVundle=1
     let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
@@ -21,7 +24,7 @@ filetype off
     Bundle 'tpope/vim-surround'
     Bundle 'mattn/emmet-vim'
     Bundle 'airblade/vim-gitgutter'
-    Bundle 'scrooloose/syntastic'
+    Bundle 'w0rp/ale'
     Bundle 'oranget/vim-csharp'
     Bundle 'kovisoft/slimv'
     "...All your other bundles...
@@ -53,7 +56,9 @@ set number
 " Persistent undo
 if has("persistent_undo")
   let &undodir = expand("$HOME/.vim/undo")
-  silent call system ('mkdir ' . &undodir)
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, "p")
+  endif
   set undofile
 end
 
