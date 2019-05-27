@@ -5,3 +5,7 @@
 	ui = auto
 [push]
 	default = simple
+[hub]
+  protocol = https
+[gpg]
+	program = gpg2
