@@ -1,57 +1,28 @@
 set nocompatible
-filetype off
-
-"profile start /tmp/gitgutter.log
-"profile! file */vim-gitgutter/*
-
-" Setting up Vundle - the vim plugin bundler
-    let iCanHazVundle=1
-    let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-    if !filereadable(vundle_readme)
-        echo "Installing Vundle.."
-        echo ""
-        silent !mkdir -p ~/.vim/bundle
-        silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
-        let iCanHazVundle=0
-    endif
-    set rtp+=~/.vim/bundle/vundle/
-
-    call vundle#rc()
-    Bundle 'gmarik/vundle'
-    "Add your bundles here
-    Bundle 'tpope/vim-fugitive'
-    Bundle 'ctrlpvim/ctrlp.vim'
-    Bundle 'tpope/vim-surround'
-    Bundle 'mattn/emmet-vim'
-    Bundle 'airblade/vim-gitgutter'
-    Bundle 'w0rp/ale'
-    Bundle 'oranget/vim-csharp'
-    Bundle 'kovisoft/slimv'
-    "...All your other bundles...
-    if iCanHazVundle == 0
-        echo "Installing Bundles, please ignore key map error messages"
-        echo ""
-        :BundleInstall
-    endif
-" Setting up Vundle - the vim plugin bundler end
 
 colorscheme zenburn
 syntax on
 filetype plugin indent on
-runtime macros/matchit.vim
 
-set expandtab
-set softtabstop=2
-set tabstop=2
-set shiftwidth=2
+if has("packages")
+  packadd! matchit
+else
+  runtime macros/matchit.vim
+endif
+
 set autoindent
-set smartindent
-set ignorecase
-set smartcase
-set incsearch
 set backspace=indent,eol,start
+set expandtab
+set ignorecase
+set incsearch
 set mouse=n
 set number
+set shiftwidth=2
+set smartcase
+set smartindent
+set softtabstop=2
+set tabstop=2
+set wildmenu
 
 " Persistent undo
 if has("persistent_undo")
@@ -72,7 +43,7 @@ end
 " Printer options
 set printoptions=left:5pc,header:0
 
-:au BufLeave,BufUnload,BufWinLeave ?* mkview
+:au BufWinLeave ?* mkview
 :au BufWinEnter ?* silent loadview
 
 :autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby
@@ -83,11 +54,16 @@ set printoptions=left:5pc,header:0
 :autocmd BufEnter *.css,*.scss set softtabstop=4 tabstop=4 shiftwidth=4 
 :autocmd BufEnter *.php set softtabstop=4 tabstop=4 shiftwidth=4 
 
+:autocmd FileType ruby setlocal formatoptions-=ro
+
 "Move between windows easier
 map <C-J> <C-W>j
 map <C-H> <C-W>h
 map <C-K> <C-W>k
 map <C-L> <C-W>l
+
+" Save file and execute previous command in right tmux pane
+nnoremap \q :w<CR>:silent call system('tmux send-keys -t right C-p C-j') <CR>
 
 "omnifunc
 set omnifunc=syntaxcomplete#Complete

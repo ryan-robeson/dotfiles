@@ -1,4 +1,5 @@
 .vim/bundle
+.vim/pack
 .vim/view
 .vim/undo
 .oh-my-zsh/custom/example*

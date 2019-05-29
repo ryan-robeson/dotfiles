@@ -1,0 +1,186 @@
+#!/usr/bin/env ruby
+
+# Manage vim plugins
+
+require 'fileutils'
+require 'open3'
+require 'pathname'
+
+# List of plugins.
+# Supports GitHub style user/repo, full path, and local uncompressed repos.
+# Assumes Git in most cases.
+#
+# Consider moving this to a file
+#
+# Examples:
+#   ctrlpvim/ctrlp.vim
+#   https://github.com/ryan-robeson/vim-plugin.git
+#   https://github.com/ryan-robeson/vim-plugin
+#   https://example.com/ryan-robeson/vim-plugin
+#   http://example.com/ryan-robeson/vim-plugin.git
+#   git://example.com/ryan-robeson/vim-plugin
+#   ~/src/vim-plugin
+PLUGINS = %w[
+    airblade/vim-gitgutter
+    ctrlpvim/ctrlp.vim
+    kovisoft/slimv
+    mattn/emmet-vim
+    oranget/vim-csharp
+    tpope/vim-fugitive
+    tpope/vim-surround
+    w0rp/ale
+]
+
+# Assume ~/.vim for now
+# Note: Parsing vim --version is a potential option
+VIM_DIRECTORY = (Pathname.new "~/.vim").expand_path
+PACKAGE_DIR = VIM_DIRECTORY/"pack"/"vipack"/"start"
+
+def spec_to_path(spec)
+  path = nil
+  type = nil
+
+  case spec
+  when /\.git$/
+    type = :git
+    path = spec
+  when /^[[:word:]]+\/[^\/]+$/
+    type = :github
+    path = "https://github.com/#{spec}.git"
+  when /github\.com/
+    type = :github
+    path = spec
+  when /(?:https?:|git:)/
+    # Assume git for http(s)
+    type = :git
+    path = spec
+  else
+    s = File.expand_path spec
+    if File.exist? s
+      type = :local
+      path = Pathname.new s
+    end
+  end
+
+  if type.nil?
+    nil
+  else
+    { path: path, type: type }
+  end
+end
+
+def install
+  unless VIM_DIRECTORY.exist?
+    $stderr.puts "Could not find #{VIM_DIRECTORY}. Something may be wrong. Please create it and try again."
+    exit 1
+  end
+
+  unless PACKAGE_DIR.exist?
+    $stderr.puts "Could not find #{PACKAGE_DIR}. Creating..."
+    FileUtils.mkdir_p PACKAGE_DIR
+  end
+
+  $stderr.puts "Installing plugins"
+
+  manage_plugins do |details|
+    if details.nil?
+      next [false, "Could not determine type of source"]
+    end
+
+    case details[:type]
+    when :git, :github
+      _, err, status = Open3.capture3("git", "clone", "-q", "--depth", "1", "--no-local", details[:path], chdir: PACKAGE_DIR)
+
+      unless status.success?
+        if err =~ /destination path .+ already exists and is not an empty directory/
+          # The plugins directory already existing should not be considered an
+          # error given that this command should be called whenever a new
+          # plugin is added to the list.
+          nil
+        else
+          # Something really did go wrong. On to the next one
+          next [false, "Failed to clone #{details[:path]}.\n\t'#{err.chomp}'"]
+        end
+      end
+
+    when :local
+      # Assume an unpacked plugin dir
+      if (PACKAGE_DIR/details[:path].basename).exist?
+        # Don't copy over the existing directory
+        nil
+      else
+        # Should be safe to copy everything over
+        FileUtils.cp_r details[:path], PACKAGE_DIR
+      end
+    end # end case
+
+    # Made it this far. Must not have been any issues
+    next [true, nil]
+  end
+
+end
+
+# Wraps plugin management with a half decent UI
+# Takes a block
+# Yields a Hash for each plugin
+# => { path: "path", type: :type }
+# Expects block to "return" an Array containing true or false depending on the
+# success of changing the plugin and an optional error message.
+def manage_plugins
+  # Add some nice looking checkmarks all lined up
+  max_plugin_name_length = 40 # Truncate to minimize wrapping on smaller terminals
+  longest_plugin_name_length = [ PLUGINS.max_by(&:length).length, max_plugin_name_length ].min
+  check = "\u2713".rjust(longest_plugin_name_length + 1, ' ').freeze
+
+  PLUGINS.each do |plugin|
+    details = spec_to_path(plugin)
+    _check = check[[plugin.length, max_plugin_name_length].min - 1..-1]
+    _fail = _check.dup[0..-2] + "\u274C"
+
+    # Display current plugin (truncated as necessary)
+    print "> #{plugin.length > max_plugin_name_length ? "#{plugin[0..max_plugin_name_length]}..." : plugin}"
+
+    success, error_message = yield details
+
+    if success === true
+      puts _check
+    else
+      puts _fail
+    end
+
+    $stderr.puts error_message unless error_message.nil?
+  end
+end
+
+def update
+  puts "Update"
+
+  manage_plugins do |details|
+    if details[:path] =~ /tpope/
+      next [false, "Failed to install"]
+    else
+      next [true, nil]
+    end
+  end
+end
+
+def help
+  puts """Usage: #{$0} install|update
+
+Manage Vim plugins.
+
+  install	Install plugins
+  update	Update all installed plugins"""
+  exit 1
+end
+
+if ARGV.length > 0
+  case ARGV[0]
+  when "install"
+    install
+  when "update"
+    update
+  else
+    help
+  end
+end

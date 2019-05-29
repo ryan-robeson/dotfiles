@@ -48,6 +48,8 @@ export PATH=$PATH:$FDK_EXE
 # TODO: fix this properly
 export HOMEBREW_CASK_OPTS=""
 
+export EDITOR=/opt/boxen/homebrew/bin/vim
+
 # tabtab source for electron-forge package
 # uninstall by removing these lines or running `tabtab uninstall electron-forge`
 [[ -f ~/.nodenv/versions/8.11.1/lib/node_modules/electron-forge/node_modules/tabtab/.completions/electron-forge.zsh ]] && . ~/.nodenv/versions/8.11.1/lib/node_modules/electron-forge/node_modules/tabtab/.completions/electron-forge.zsh
