@@ -164,6 +164,38 @@ def update
   end
 end
 
+# Based on Git clone's guess_dir_name without support for bundles, bare repos,
+# or pathless checkouts (e.g. git://user@servername:8088).
+# https://github.com/git/git/blob/aa25c82427ae70aebf3b8f970f2afd54e9a2a8c6/builtin/clone.c#L208
+#
+# Examples:
+#   "https://hello:world@example.com:8202/user/package.git"         => package
+#   "https://hello:world@example.com:8202/user/\x09package /.git/ " => package
+#   "https://example.com/user/dot@files.git"                        => dot@files
+#   "git://hello:world@example.com:8202:test.git"                   => test
+def guess_git_dir_name(repo)
+  dir = repo
+
+  # Removing leading and trailing whitespace
+  dir.strip!
+  # Remove trailing slashes
+  dir.sub! /\/*$/, ''
+  # Remove /.git
+  dir.delete_suffix! '/.git'
+  # Get the last component of the path.
+  # Colons also count as path separators, so 'foo:bar.git' becomes 'bar'.
+  dir.sub! /.+[:\/\\](.+)$/, '\1'
+  # Remove .git
+  dir.delete_suffix! '.git'
+  # Change 'control' characters to spaces
+  dir.chars.map { |c| c < "\x20" ? ' ' : c }
+  # Condense multiple spaces into 1
+  dir.gsub! /\s+/, ' '
+  # Remove leading and trailing whitespace again
+  dir.strip!
+
+  dir
+end
 
 def help
   puts """Usage: #{$0} install|update
