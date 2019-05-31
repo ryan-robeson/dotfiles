@@ -27,6 +27,14 @@ set softtabstop=-1 " Use value of 'shiftwidth'
 set tabstop=2
 set wildmenu
 
+" Increase viminfo registry limits
+" See: help 'viminfo
+" Marks = 100
+" register lines = <1000
+" register max size = 100kb
+" don't restore search highlighting
+set viminfo='100,<1000,s100,h
+
 highlight IncSearch ctermfg=28 ctermbg=254
 highlight NonText   ctermfg=123
 
