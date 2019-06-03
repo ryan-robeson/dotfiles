@@ -3,6 +3,7 @@
 # Manage vim plugins
 
 require 'fileutils'
+require 'find'
 require 'open3'
 require 'pathname'
 
@@ -56,7 +57,7 @@ def spec_to_path(spec)
     path = spec
   else
     s = File.expand_path spec
-    if File.exist? s
+    if Dir.exist? s
       type = :local
       path = Pathname.new s
     end
@@ -117,7 +118,6 @@ def install
     # Made it this far. Must not have been any issues
     next [true, nil]
   end
-
 end
 
 # Wraps plugin management with a half decent UI
@@ -153,14 +153,70 @@ def manage_plugins
 end
 
 def update
-  puts "Update"
+  puts "Updating plugins"
 
   manage_plugins do |details|
-    if details[:path] =~ /tpope/
-      next [false, "Failed to install"]
-    else
-      next [true, nil]
+    if details.nil?
+      next [false, "Could not determine type of source"]
     end
+
+    plugin_dir = PACKAGE_DIR / guess_dir_name(details[:path], details[:type])
+
+    if !Dir.exist? plugin_dir
+      next [false, "#{plugin_dir} not found. Skipping update."]
+    end
+
+    case details[:type]
+    when :git, :github
+      # git pull -q --rebase
+      out, status = Open3.capture2e("git", "pull", "-q", "--rebase", chdir: plugin_dir)
+
+      unless status.success?
+        next [false, "Update failed:\n\t#{out}"]
+      end
+
+    when :local
+      update_required = false
+      source_dir = details[:path]
+      old_source_found = false
+      old_sources = []
+
+      Find.find(source_dir) do |file|
+        # NOTE: This misses when files are only deleted from source_dir. Fine
+        # for now
+        if ! FileUtils.uptodate?(plugin_dir/file , [ source_dir/file ])
+          update_required = true
+          break
+        end
+      end
+
+      if update_required
+        # Going to move the plugin out of the way
+        old_plugin = plugin_dir + '_'
+
+        # In case there's already an old copy of the plugin hanging around
+        while Dir.exist? old_plugin
+          old_source_found = true
+          old_sources << old_plugin
+
+          old_plugin = old_plugin + '_'
+        end
+
+        FileUtils.mv plugin_dir, old_plugin
+
+        # Copy the updated plugin into place
+        FileUtils.cp_r source_dir, PACKAGE_DIR
+
+        # Remove the backup copy
+        FileUtils.rm_r old_plugin
+
+        if old_source_found
+          next [true, "Warning: Old plugin copies found. You may want to delete them -\n\t\t#{old_sources.join("\n\t\t")}"]
+        end
+      end
+    end # end case
+
+    next [true, nil]
   end
 end
 
@@ -197,13 +253,31 @@ def guess_git_dir_name(repo)
   dir
 end
 
+# Returns the expected output directory name based on the given source path and
+# type.
+def guess_dir_name(path, type)
+  dir = nil
+
+  case type
+  when :git, :github
+    dir = guess_git_dir_name path
+  when :local
+    dir = Pathname.new(path).basename
+    if !Dir.exist? dir
+      dir = nil
+    end
+  end
+
+  dir
+end
+
 def help
   puts """Usage: #{$0} install|update
 
 Manage Vim plugins.
 
   install	Install plugins
-  update	Update all installed plugins"""
+  update	Update installed plugins"""
   exit 1
 end
 
