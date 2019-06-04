@@ -79,13 +79,9 @@ augroup filetypes
   au!
   autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby
   autocmd BufEnter *.md set filetype=markdown
-  autocmd BufEnter *.py set softtabstop=4 tabstop=4 shiftwidth=4
-  autocmd BufEnter *.pl set softtabstop=4 tabstop=4 shiftwidth=4
-  autocmd BufEnter *.html,*.htm set softtabstop=4 tabstop=4 shiftwidth=4
-  autocmd BufEnter *.css,*.scss set softtabstop=4 tabstop=4 shiftwidth=4
-  autocmd BufEnter *.php set softtabstop=4 tabstop=4 shiftwidth=4
 
   autocmd FileType ruby setlocal formatoptions-=o formatoptions+=j
+  autocmd FileType python,perl,html,css,scss,php set tabstop=4
 augroup END
 
 "Move between windows easier
