@@ -38,6 +38,14 @@ set viminfo='100,<1000,s100,h
 highlight IncSearch ctermfg=28 ctermbg=254
 highlight NonText   ctermfg=123
 
+" GitGutter started using colorscheme Diff* highlight settings.
+" ctermbg and guibg come from `:hi LineNr`. SignColumn links to LineNr and is
+" therefore overridden.
+" ctermfg and guifg come from the GitGutter readme.
+highlight GitGutterAdd    ctermfg=2 ctermbg=238 guifg=#009900 guibg=#262626
+highlight GitGutterChange ctermfg=3 ctermbg=238 guifg=#bbbb00 guibg=#262626
+highlight GitGutterDelete ctermfg=1 ctermbg=238 guifg=#ff2222 guibg=#262626
+
 " Highlight trailing whitespace automatically
 highlight TrailingWhitespace ctermbg=red guibg=red
 call matchadd("TrailingWhitespace", '\s\+$')
