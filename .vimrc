@@ -61,18 +61,24 @@ end
 " Printer options
 set printoptions=left:5pc,header:0
 
-au BufWinLeave ?* mkview
-au BufWinEnter ?* silent loadview
+augroup persist_views
+  au!
+  au BufWinLeave ?* mkview
+  au BufWinEnter ?* silent loadview
+augroup END
 
-autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby
-autocmd BufEnter *.md set filetype=markdown
-autocmd BufEnter *.py set softtabstop=4 tabstop=4 shiftwidth=4
-autocmd BufEnter *.pl set softtabstop=4 tabstop=4 shiftwidth=4
-autocmd BufEnter *.html,*.htm set softtabstop=4 tabstop=4 shiftwidth=4
-autocmd BufEnter *.css,*.scss set softtabstop=4 tabstop=4 shiftwidth=4
-autocmd BufEnter *.php set softtabstop=4 tabstop=4 shiftwidth=4
+augroup filetypes
+  au!
+  autocmd BufEnter *.thor,Gemfile,Rakefile,Cheffile set filetype=ruby
+  autocmd BufEnter *.md set filetype=markdown
+  autocmd BufEnter *.py set softtabstop=4 tabstop=4 shiftwidth=4
+  autocmd BufEnter *.pl set softtabstop=4 tabstop=4 shiftwidth=4
+  autocmd BufEnter *.html,*.htm set softtabstop=4 tabstop=4 shiftwidth=4
+  autocmd BufEnter *.css,*.scss set softtabstop=4 tabstop=4 shiftwidth=4
+  autocmd BufEnter *.php set softtabstop=4 tabstop=4 shiftwidth=4
 
-autocmd FileType ruby setlocal formatoptions-=o formatoptions+=j
+  autocmd FileType ruby setlocal formatoptions-=o formatoptions+=j
+augroup END
 
 "Move between windows easier
 map <C-J> <C-W>j
