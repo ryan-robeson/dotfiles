@@ -6,12 +6,33 @@ require 'fileutils'
 require 'find'
 require 'open3'
 require 'pathname'
+require 'set'
 
 # List of plugins.
+# See spec_to_path for formats.
+# This list will be merged with plugin declarations from .vimrc.
+# See vimrc_plugins.
+PLUGINS = Set.new
+#PLUGINS = %w[
+#    airblade/vim-gitgutter
+#    ctrlpvim/ctrlp.vim
+#    kovisoft/slimv
+#    mattn/emmet-vim
+#    oranget/vim-csharp
+#    tpope/vim-fugitive
+#    tpope/vim-surround
+#    w0rp/ale
+#].to_set
+
+# Assume ~/.vim for now
+# Note: Parsing vim --version is a potential option
+VIM_DIRECTORY = (Pathname.new "~/.vim").expand_path
+PACKAGE_DIR = VIM_DIRECTORY/"pack"/"vipack"/"start"
+
 # Supports GitHub style user/repo, full path, and local uncompressed repos.
 # Assumes Git in most cases.
 #
-# Consider moving this to a file
+# Returns Hash => { path: "", type: :type }
 #
 # Examples:
 #   ctrlpvim/ctrlp.vim
@@ -21,22 +42,6 @@ require 'pathname'
 #   http://example.com/ryan-robeson/vim-plugin.git
 #   git://example.com/ryan-robeson/vim-plugin
 #   ~/src/vim-plugin
-PLUGINS = %w[
-    airblade/vim-gitgutter
-    ctrlpvim/ctrlp.vim
-    kovisoft/slimv
-    mattn/emmet-vim
-    oranget/vim-csharp
-    tpope/vim-fugitive
-    tpope/vim-surround
-    w0rp/ale
-]
-
-# Assume ~/.vim for now
-# Note: Parsing vim --version is a potential option
-VIM_DIRECTORY = (Pathname.new "~/.vim").expand_path
-PACKAGE_DIR = VIM_DIRECTORY/"pack"/"vipack"/"start"
-
 def spec_to_path(spec)
   path = nil
   type = nil
@@ -68,6 +73,33 @@ def spec_to_path(spec)
   else
     { path: path, type: type }
   end
+end
+
+# Pull plugin declarations from vimrc.
+# Will read declarations from Vundle or vim-plug if they are being used for
+# backwards compatibility. They should be wrapped in `if ! has('packages')` to
+# avoid conflict with native package support.
+# Also supports plugins declared in comments when backwards compatibility is not
+# required. `" Plugin 'airblade/vim-gitgutter'
+def vimrc_plugins
+  plugins = Set.new
+  declarations = '(?:Plug(in)?|Bundle)'
+  vimrc = '~/.vimrc'
+
+  begin
+    File.readlines(File.expand_path(vimrc)).each do |line|
+      next unless line.match?(/#{declarations}/)
+      # Support commenting out plugins with leading double quotes '""' since
+      # plugins are being declared in comments.
+      next if line.match?(/"".+#{declarations}/)
+
+      plugins << line.match(/#{declarations} ['"](?<spec>.+)['"]/)&.[](:spec)
+    end
+  rescue SystemCallError => e
+    $stderr.puts "Something went wrong reading plugins from '#{vimrc}'.\n\t=> #{e.message}"
+  end
+
+  plugins.delete(nil)
 end
 
 def install
@@ -131,12 +163,15 @@ end
 # of success.
 # Raises an error when an invalid value is given for success.
 def manage_plugins # yield Hash
+  # Merge PLUGINS with plugins from vimrc
+  plugins = PLUGINS + vimrc_plugins
+
   # Add some nice looking checkmarks all lined up
   max_plugin_name_length = 40 # Truncate to minimize wrapping on smaller terminals
-  longest_plugin_name_length = [ PLUGINS.max_by(&:length).length, max_plugin_name_length ].min
+  longest_plugin_name_length = [ plugins.max_by(&:length).length, max_plugin_name_length ].min
   check = "\u2713".rjust(longest_plugin_name_length + 1, ' ').freeze
 
-  PLUGINS.each do |plugin|
+  plugins.each do |plugin|
     details = spec_to_path(plugin)
     _check = check[[plugin.length, max_plugin_name_length].min - 1..-1]
     _fail = _check.dup[0..-2] + "\u274C"
