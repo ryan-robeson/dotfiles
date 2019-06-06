@@ -3,6 +3,17 @@ if &compatible
   set nocompatible
 endif
 
+" Packages
+" Plugin 'airblade/vim-gitgutter'
+" Plugin 'ctrlpvim/ctrlp.vim'
+" Plugin 'kovisoft/slimv'
+" Plugin 'mattn/emmet-vim'
+" Plugin 'oranget/vim-csharp'
+" Plugin 'tpope/vim-fugitive'
+" Plugin 'tpope/vim-surround'
+" Plugin 'w0rp/ale'
+" END Packages
+
 colorscheme zenburn
 syntax on
 filetype plugin indent on
@@ -92,6 +103,47 @@ map <C-L> <C-W>l
 
 " Save file and execute previous command in right tmux pane
 nnoremap \q :w<CR>:silent call system('tmux send-keys -t right C-p C-j') <CR>
+
+" Package Management
+if has('job')
+  command! VipackInstall call VipackAsync('install')
+  command! VipackUpdate call VipackAsync('update')
+else
+  command! VipackInstall vsplit __VipackInstall__ <BAR> setlocal buftype=nofile <BAR> let result=system('vipack install') <BAR> call append(0, split(result, '\v\n'))
+  command! VipackUpdate vsplit __VipackUpdate__ <BAR> setlocal buftype=nofile <BAR> let result=system('vipack update') <BAR> call append(0, split(result, '\v\n'))
+endif
+
+" Inspired by:
+" http://www.patternweld.com/code/2016/10/20/running-tests-asynchronously-in-vim.html
+function! VipackAsync(action)
+  let script = 'vipack '. a:action
+  let outname = '__Vipack ' . a:action . '__'
+  let options = { 'in_io': 'null', 'out_io': 'buffer', 'out_name': outname }
+
+  let job = job_start(script, options)
+
+  " Only split when necessary
+  " See: https://stackoverflow.com/a/6640380
+  let bufnum = bufnr(outname)
+  let winnum = bufwinnr(bufnum)
+  if winnum == -1
+    " Open a vertical split for the output
+    execute 'vertical sbuf ' . outname
+  else
+    " Jump to the existing split
+    execute winnum . "wincmd w"
+  endif
+
+  " Clear the buffer
+  normal ggdG
+  " Make sure the buffer is treated like a Scratch buffer
+  setlocal nobuflisted
+  setlocal bufhidden=hide
+  setlocal buftype=nofile
+  setlocal noswapfile
+  " Set the width of the split
+  vertical resize 45
+endfunction
 
 "omnifunc
 set omnifunc=syntaxcomplete#Complete
