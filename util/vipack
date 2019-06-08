@@ -42,6 +42,21 @@ PACKAGE_DIR = VIM_DIRECTORY/"pack"/"vipack"/"start"
 #   http://example.com/ryan-robeson/vim-plugin.git
 #   git://example.com/ryan-robeson/vim-plugin
 #   ~/src/vim-plugin
+#
+# Note:
+# Options are not currently supported. They could be, however, with something like:
+#
+# # This string would be after the plugin path
+# # E.g. ctrlpvim/ctrlp.vim, { name: 'ale', depth: '1' }
+# opts = %q|{ name: 'ale', package_name: 'vipack', git: 'git', depth: '1', dir: '~/pack', type: 'opt', branch: 'master', rev: '0c5548c' }|
+#
+# # Care would need to be taken to remove the options portion before processing the plugin path.
+# # Something like:
+# opts = spec.gsub(/^.+,\s*(\{.+)$/, '\1')
+# spec.gsub!(/,\s*\{.+$/, '')
+#
+# re = /(?<key>\w+):\s*(?<quote>['"])(?<value>.*?)\k<quote>/
+# options = opts.to_enum(:scan, re).map { r = Regexp.last_match; { r[:key].to_sym => r[:value] } }
 def spec_to_path(spec)
   path = nil
   type = nil
