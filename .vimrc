@@ -59,7 +59,6 @@ highlight GitGutterDelete ctermfg=1 ctermbg=238 guifg=#ff2222 guibg=#262626
 
 " Highlight trailing whitespace automatically
 highlight TrailingWhitespace ctermbg=red guibg=red
-call matchadd("TrailingWhitespace", '\s\+$')
 
 " Persistent undo
 if has("persistent_undo")
@@ -80,6 +79,11 @@ end
 " Printer options
 set printoptions=left:5pc,header:0
 
+augroup custom_highlighting
+  au!
+  au BufEnter * call matchadd("TrailingWhitespace", '\s\+$')
+augroup END
+
 augroup persist_views
   au!
   au BufWinLeave ?* mkview
@@ -92,7 +96,7 @@ augroup filetypes
   autocmd BufEnter *.md set filetype=markdown
 
   autocmd FileType ruby setlocal formatoptions-=o formatoptions+=j
-  autocmd FileType python,perl,html,css,scss,php set tabstop=4
+  autocmd FileType markdown,python set tabstop=4
 augroup END
 
 "Move between windows easier
