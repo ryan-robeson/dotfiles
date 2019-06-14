@@ -60,6 +60,16 @@ highlight GitGutterDelete ctermfg=1 ctermbg=238 guifg=#ff2222 guibg=#262626
 " Highlight trailing whitespace automatically
 highlight TrailingWhitespace ctermbg=red guibg=red
 
+" Consolidated swapfiles
+" The double forward slash suffix ensures that the full path
+" is encoded in the swap file. See: :help directory
+" expand() appears to be necessary on macOS
+let myswapdir = expand("~/.vim/swapfiles//")
+if !isdirectory(myswapdir)
+  call mkdir(myswapdir, "p")
+endif
+let &directory = myswapdir . ",.," . expand("~/tmp") . ",/var/tmp,/tmp"
+
 " Persistent undo
 if has("persistent_undo")
   let &undodir = expand("$HOME/.vim/undo")
