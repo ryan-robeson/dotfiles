@@ -10,6 +10,8 @@ export BOXEN_GITHUB_LOGIN=ryan-robeson
 
 export HOMEBREW_ROOT=/opt/boxen/homebrew
 export HOMEBREW_CACHE=/opt/boxen/cache/homebrew
+export HOMEBREW_NO_INSTALL_CLEANUP=1 # handled in crontab
+export HOMEBREW_AUTO_UPDATE_SECS=$((6 * 60 * 60)) # 6 hours
 
 export BOXEN_HOMEBREW_BOTTLE_URL=https://boxen-downloads.s3.amazonaws.com/homebrew
 
