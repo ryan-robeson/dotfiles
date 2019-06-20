@@ -10,11 +10,11 @@ fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 export RBENV_ROOT=$HOME/.rbenv
 export PATH=$RBENV_ROOT/bin:$PATH
 
-# Load rbenv
-(( $+commands[rbenv] )) && eval "$(rbenv init - --no-rehash)"
-
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+
+# Load rbenv if it hasn't been already (in .zsh-mac)
+[ ! -v RBENV_SHELL ] && (( $+commands[rbenv] )) && eval "$(rbenv init - --no-rehash)"
 
 (( $+commands[nodenv] )) && eval "$(nodenv init - --no-rehash)"
 
