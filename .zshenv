@@ -6,6 +6,13 @@ export EDITOR=/usr/bin/vim
 
 fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 
+# Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
+export RBENV_ROOT=$HOME/.rbenv
+export PATH=$RBENV_ROOT/bin:$PATH
+
+# Load rbenv
+(( $+commands[rbenv] )) && eval "$(rbenv init - --no-rehash)"
+
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 

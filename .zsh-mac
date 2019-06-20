@@ -17,15 +17,8 @@ export MANPATH=$HOMEBREW_ROOT/share/man:$MANPATH
 # Allow bundler to use all the cores for parallel installation
 export BUNDLE_JOBS=4
 
-# Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
-export RBENV_ROOT=$HOME/.rbenv
-export PATH=$RBENV_ROOT/bin:$PATH
-
 # Make all the fancy `hub` shortcuts available via `git`.
 eval "$($HOMEBREW_ROOT/bin/hub alias -s)"
-
-# Load rbenv
-eval "$(rbenv init - --no-rehash)"
 
 alias ql='qlmanage -p'
 alias mcjpeg="$HOMEBREW_ROOT/opt/mozjpeg/bin/cjpeg"
