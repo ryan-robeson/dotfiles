@@ -29,6 +29,12 @@ alias mjpegtrans="$HOMEBREW_ROOT/opt/mozjpeg/bin/jpegtrans"
 export FDK_EXE="$HOME/bin/FDK/Tools/osx"
 export PATH=$PATH:$FDK_EXE
 
+# Add binaries from `pip3 install --user ...` to the path.
+export PATH=$PATH:$HOME/Library/Python/3.7/bin
+
+# Add Nodenv to PATH
+export PATH=$HOME/.nodenv/bin:$PATH
+
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 
 # Load rbenv
