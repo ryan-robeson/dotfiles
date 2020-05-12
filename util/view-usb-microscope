@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+width=1600
+height=1200
+device_index=0
+pixel_format=uyvy422
+format=rawvideo
+framerate=7
+
+ffmpeg -f avfoundation -framerate $framerate -r $framerate -pixel_format $pixel_format -s ${width}x${height} -i $device_index -f $format pipe:1 | mpv --demuxer=rawvideo --demuxer-rawvideo-fps=$framerate --demuxer-rawvideo-w=$width --demuxer-rawvideo-h=$height --demuxer-rawvideo-mp-format=$pixel_format --cache=no --demuxer-thread=no -

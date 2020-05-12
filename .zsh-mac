@@ -95,6 +95,7 @@ if [[ ${$(sw_vers -productVersion)%\.[0-9]} -lt '10.13' ]] {
     PATH=/usr/bin:$PATH xcrun swift <<-eos >/dev/null 2>&1
     import Foundation
 
+    CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x:30.0, y:0.0), mouseButton: .left)!.post(tap: CGEventTapLocation.cghidEventTap)
     CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: CGPoint(x:0.0, y:0.0), mouseButton: .left)!.post(tap: CGEventTapLocation.cghidEventTap)
 eos
   }

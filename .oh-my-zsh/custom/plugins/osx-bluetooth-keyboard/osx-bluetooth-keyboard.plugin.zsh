@@ -8,6 +8,12 @@ if [[ "$OSTYPE" = darwin* ]] ; then
 
   function keyboard_battery_level() {
     local kbp=$(keyboard_battery_percentage)
+
+    # Assume full charge when not connected.
+    # Probably not ideal.
+    if [ -z "$kbp" ]; then
+      kbp=100
+    fi
     echo $kbp / 20 | bc
   }
 

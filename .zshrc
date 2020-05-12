@@ -38,5 +38,8 @@ DEFAULT_USER="ryan"
 
 # Customize to your needs...
 source $ZSH/oh-my-zsh.sh
+
+HISTSIZE=100000
+SAVEHIST=$HISTSIZE
 [ -f $HOME/bin/tmuxinator.zsh ] && source $HOME/bin/tmuxinator.zsh
 [ -f $HOME/.api-keys ] && source $HOME/.api-keys

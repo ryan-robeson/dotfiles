@@ -6,3 +6,4 @@
 .oh-my-zsh/custom/example*
 .oh-my-zsh/custom/plugins/example*
 *.log
+.vim/.netrwhist
