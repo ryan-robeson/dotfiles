@@ -8,6 +8,11 @@ export HOMEBREW_AUTO_UPDATE_SECS=$((6 * 60 * 60)) # 6 hours
 export CFLAGS="-I$HOMEBREW_ROOT/include"
 export LDFLAGS="-L$HOMEBREW_ROOT/lib"
 
+# Explicitly set PATH
+# NOTE: Why did I make this explicit? (initial commit had explicit PATH in zshrc) :/
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:/Library/Tex/texbin
+export PATH=/usr/local/heroku/bin:$PATH
+
 # Add homebrew'd stuff to the path.
 export PATH=$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:$PATH
 

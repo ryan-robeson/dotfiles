@@ -1,17 +1,19 @@
 export GOPATH=$HOME/Code/go
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$HOME/bin:/Library/Tex/texbin:$GOPATH/bin
-export PATH=/usr/local/heroku/bin:$PATH
 
 export EDITOR=/usr/bin/vim
 
 fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 
+# Source mac environment settings if available.
+[ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+
+export PATH=$PATH:$HOME/bin
+
 # Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
 export RBENV_ROOT=$HOME/.rbenv
 export PATH=$RBENV_ROOT/bin:$PATH
 
-# Source mac environment settings if available.
-[ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
+export PATH=$PATH:$GOPATH/bin
 
 # Load rbenv if it hasn't been already (in .zsh-mac)
 [ ! -v RBENV_SHELL ] && (( $+commands[rbenv] )) && eval "$(rbenv init - --no-rehash)"
