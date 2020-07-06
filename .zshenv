@@ -93,6 +93,43 @@ function sidious_sleep {
   ssh sidious -t sudo systemctl hybrid-sleep
 }
 
+# Remove exited Docker containers
+function remove_exited_containers {
+  echo "Removing exited containers:"
+
+  docker ps --filter status=dead --filter status=exited -a
+
+  if read -q "continue?Continue? (y/n): "; then
+    if (( $+commands[gxargs] )); then
+      # macOS 10.12 xargs does not have '-r'
+      xargs_cmd=gxargs
+    else
+      xargs_cmd=xargs
+    fi
+
+    docker ps --filter status=dead --filter status=exited -aq | $xargs_cmd -r docker rm -v
+  fi
+}
+
+# Remove unused Docker images
+function remove_unused_images {
+  echo "Removing unused Docker images:"
+
+  docker images --no-trunc | grep '<none>'
+
+  if read -q "continue?Continue? (y/n): "; then
+    if (( $+commands[gxargs] )); then
+      # macOS 10.12 xargs does not have '-r'
+      xargs_cmd=gxargs
+    else
+      xargs_cmd=xargs
+    fi
+
+    docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | $xargs_cmd -r docker rmi
+  fi
+}
+
+
 function new_self_signed_cert {
   usage="
 Usage: $0 subjectAltNames [keyName] [certName]
@@ -126,7 +163,7 @@ certName             The name of the cert file
   subjectAltNames="$1"
   keyName="${2:-key.pem}"
   certName="${3:-cert.pem}"
-  
+
   if [[ -f "$keyName" || -f "$certName" ]]; then
     echo Not overwriting existing key and/or cert.
     echo Exiting...
