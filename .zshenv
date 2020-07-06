@@ -1,24 +1,131 @@
+# This file can be sourced multiple times (e.g. tmux).
+# Watch out for side effects.
+
+# Append to a PATH-like variable without duplicates (including symlinks) or
+# empty directories.
+# Usage: rr_path_like_append PATHLIKEVAR DIR...
+#
+# Based on https://unix.stackexchange.com/a/480523 with modifications for
+# supporting any PATH-like variable and preventing duplicate symlinks in PATH
+# (initial version assumed only realpaths in PATH).
+rr_path_like_append() {
+  local dirname
+  local varname=$1
+  shift 1
+
+  for dirname in "${@}"; do
+    dirname="${dirname%/}"
+    [[ "${dirname:0:1}" == '/' &&
+      ":${(P)varname}:" != *":${dirname}:"* &&
+      ":${(P)varname}:" != *":${dirname:A}:"* &&
+      -d "${dirname}" ]] || continue
+    eval ${varname}=\"${(P)varname}:${dirname}\"
+  done
+  eval ${varname}="${(P)varname#:}"
+  export ${varname}
+}
+
+# Prepend to a PATH-like variable without duplicates (including symlinks) or
+# empty directories.
+# Usage: rr_path_like_prepend PATHLIKEVAR DIR...
+rr_path_like_prepend() {
+  local dirname
+  local varname=$1
+  shift 1
+
+  for dirname in "${@}"; do
+    dirname="${dirname%/}"
+    [[ "${dirname:0:1}" == '/' &&
+      ":${(P)varname}:" != *":${dirname}:"* &&
+      ":${(P)varname}:" != *":${dirname:A}:"* &&
+      -d "${dirname}" ]] || continue
+    eval ${varname}=\"${dirname}:${(P)varname}\"
+  done
+  eval ${varname}="${(P)varname#:}"
+  export ${varname}
+}
+
+# Append to path without duplicates (including symlinks) or empty directories.
+rr_path_append() {
+  rr_path_like_append PATH "$@"
+}
+
+# Prepend to path without duplicates (including symlinks) or empty directories.
+rr_path_prepend() {
+  rr_path_like_prepend PATH "$@"
+}
+
+rr_activate_rbenv() {
+  # Setup rbenv
+  rr_path_prepend $RBENV_ROOT/bin
+
+  # Manually initialize rbenv to avoid issues with duplicate PATH entries
+  # and/or initialization problems when run multiple times (e.g. exec $SHELL)
+  rr_path_prepend /Users/ryan/.rbenv/shims
+  export RBENV_SHELL=zsh
+
+  rbenv() {
+    local command
+    command="${1:-}"
+    if [ "$#" -gt 0 ]; then
+      shift
+    fi
+
+    case "$command" in
+    rehash|shell)
+      eval "$(rbenv "sh-$command" "$@")";;
+    *)
+      command rbenv "$command" "$@";;
+    esac
+  }
+}
+
+rr_activate_nodenv() {
+  # Setup Nodenv
+  rr_path_prepend $HOME/.nodenv/bin
+
+  # Manually initialize nodenv to avoid issues with duplicate PATH entries
+  # and/or initialization problems when run multiple times (e.g. exec $SHELL)
+  rr_path_prepend /Users/ryan/.nodenv/shims
+  export NODENV_SHELL=zsh
+
+  nodenv() {
+    local command
+    command="${1:-}"
+    if [ "$#" -gt 0 ]; then
+      shift
+    fi
+
+    case "$command" in
+    rehash|shell)
+      eval "$(nodenv "sh-$command" "$@")";;
+    *)
+      command nodenv "$command" "$@";;
+    esac
+  }
+}
+
+export RBENV_ROOT=$HOME/.rbenv
+
 export GOPATH=$HOME/Code/go
 
 export EDITOR=/usr/bin/vim
 
 fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 
+rr_path_append /usr/sbin /sbin /usr/local/bin /usr/local/sbin
+
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
-export PATH=$PATH:$HOME/bin
+# These activations are duplicated in .zsh-mac to setup the proper PATH order.
+# They are idempotent.
+rr_activate_nodenv
+rr_activate_rbenv
 
-# Configure RBENV_ROOT and put RBENV_ROOT/bin on PATH
-export RBENV_ROOT=$HOME/.rbenv
-export PATH=$RBENV_ROOT/bin:$PATH
+rr_path_append $HOME/bin
 
-export PATH=$PATH:$GOPATH/bin
-
-# Load rbenv if it hasn't been already (in .zsh-mac)
-[ ! -v RBENV_SHELL ] && (( $+commands[rbenv] )) && eval "$(rbenv init - --no-rehash)"
-
-(( $+commands[nodenv] )) && eval "$(nodenv init - --no-rehash)"
+rr_path_append $GOPATH/bin
 
 alias gloga='git log --decorate --oneline --graph --all'
 
