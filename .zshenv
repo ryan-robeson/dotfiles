@@ -56,6 +56,10 @@ rr_path_prepend() {
 }
 
 rr_activate_rbenv() {
+  if [[ ! -d $RBENV_ROOT ]]; then
+    return
+  fi
+
   # Setup rbenv
   rr_path_prepend $RBENV_ROOT/bin
 
@@ -81,6 +85,10 @@ rr_activate_rbenv() {
 }
 
 rr_activate_nodenv() {
+  if [[ ! -d $HOME/.nodenv ]]; then
+    return
+  fi
+
   # Setup Nodenv
   rr_path_prepend $HOME/.nodenv/bin
 
