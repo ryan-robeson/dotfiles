@@ -61,7 +61,7 @@ rr_activate_rbenv() {
 
   # Manually initialize rbenv to avoid issues with duplicate PATH entries
   # and/or initialization problems when run multiple times (e.g. exec $SHELL)
-  rr_path_prepend /Users/ryan/.rbenv/shims
+  rr_path_prepend $RBENV_ROOT/shims
   export RBENV_SHELL=zsh
 
   rbenv() {
@@ -86,7 +86,7 @@ rr_activate_nodenv() {
 
   # Manually initialize nodenv to avoid issues with duplicate PATH entries
   # and/or initialization problems when run multiple times (e.g. exec $SHELL)
-  rr_path_prepend /Users/ryan/.nodenv/shims
+  rr_path_prepend $HOME/.nodenv/shims
   export NODENV_SHELL=zsh
 
   nodenv() {
@@ -283,6 +283,9 @@ certName             The name of the cert file
   echo All done. Have a nice day!
 }
 
+### Deprecated ###
+## See ~/Documents/ca/readme.md for updated commands
+#
 # Documenting for future automation
 # Underscores are placeholders for real values
 # Generate a self-signed Root CA
@@ -297,3 +300,4 @@ certName             The name of the cert file
 
 # Generate Cert from CSR (CA)
 # openssl x509 -req -in $node.csr -CA $ca.crt.pem -CAkey $ca.key.pem -CAcreateserial -out $node.crt.pem -days 730 -sha256 -extfile <(printf subjectAltName=DNS:localhost,DNS:_,DNS:_._.ryanrobeson.com)
+### END Deprecated ###
