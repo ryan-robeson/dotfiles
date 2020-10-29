@@ -4,6 +4,12 @@ set -e # err_exit
 brew_pre() {
   # GEGL fails to upgrade if coreutils is linked
   brew unlink coreutils
+
+  # Rebase our changes to homebrew-core on the current master
+  cd $(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core
+  if [[ `git branch --show-current` == 'custom' ]]; then
+    git rebase master
+  fi
 }
 
 brew_post() {

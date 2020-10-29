@@ -1,7 +1,7 @@
 export DISABLE_AUTO_TITLE=true
 
-export HOMEBREW_ROOT=/opt/boxen/homebrew # brew --prefix
-export HOMEBREW_CACHE=/opt/boxen/cache/homebrew # brew --cache
+export HOMEBREW_ROOT=/usr/local
+export HOMEBREW_CACHE=$(brew --cache)
 export HOMEBREW_NO_INSTALL_CLEANUP=1 # handled in crontab
 export HOMEBREW_AUTO_UPDATE_SECS=$((6 * 60 * 60)) # 6 hours
 
