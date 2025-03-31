@@ -9,3 +9,10 @@
   protocol = https
 [gpg]
 	program = gpg2
+[merge]
+	tool = opendiff
+[mergetool "opendiff"]
+	cmd = opendiff -merge \"$MERGED\" \"$LOCAL\" \"$REMOTE\"
+	trustExitCode = false
+[init]
+	defaultBranch = master

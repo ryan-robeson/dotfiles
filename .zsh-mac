@@ -11,7 +11,14 @@ export LDFLAGS="-L$HOMEBREW_ROOT/lib"
 rr_path_prepend /usr/local/heroku/bin
 
 # Add homebrew'd stuff to the path.
-rr_path_prepend $HOMEBREW_ROOT/bin $HOMEBREW_ROOT/sbin
+# rr_path_prepend $HOMEBREW_ROOT/bin $HOMEBREW_ROOT/sbin
+#
+# TODO: Go back to manually specifying the PATH.  For the most part, PATH
+# manipulation functions make things too complicated.
+# Or perhaps they're truly the answer? 20240820
+#export PATH=/usr/local/share/dotnet:$HOME/.dotnet/tools:/Library/Apple/usr/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:$PATH
+
+rr_path_prepend /usr/local/share/dotnet $HOME/.dotnet/tools /Library/Apple/usr/bin $HOMEBREW_ROOT/bin $HOMEBREW_ROOT/sbin
 
 # Add homebrew'd stuff to the manpath.
 rr_path_like_prepend MANPATH $HOMEBREW_ROOT/share/man
@@ -38,6 +45,8 @@ rr_path_append $FDK_EXE
 
 # Add binaries from `pip3 install --user ...` to the path.
 rr_path_append $HOME/Library/Python/3.7/bin
+
+rr_path_append $HOME/.docker/bin
 
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 
@@ -84,7 +93,9 @@ eos
 
 # Locking the screen is much easier from 10.13 onward.
 # Remove this check and the extra code after upgrading.
-if [[ ${$(sw_vers -productVersion)%\.[0-9]} -lt '10.13' ]] {
+autoload is-at-least
+is-at-least "10.13" ${$(sw_vers -productVersion)%\.[0-9]}
+if [[ $? -eq 1 ]] {
   # Lock the screen - Workaround since I haven't updated past Sierra yet
   # https://stackoverflow.com/a/41196453
   function lock_screen() {
@@ -112,5 +123,5 @@ eos
 
 # List Brew formula installed by user (installed_on_request)
 function installed_on_request() {
-  brew list | xargs brew info --json | ruby -r json -ne 'j = JSON.parse($_); o = j.reduce([]) { |a, v| a << v["name"] unless v["installed"][0]["installed_on_request"].nil?; a }; puts o.join("\n")'
+  brew list --formula | xargs brew info --json | ruby -r json -ne 'j = JSON.parse($_); o = j.reduce([]) { |a, v| a << v["name"] unless v["installed"][0]["installed_on_request"].nil?; a }; puts o.join("\n")'
 }

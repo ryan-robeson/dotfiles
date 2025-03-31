@@ -121,7 +121,7 @@ export EDITOR=/usr/bin/vim
 
 fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 
-rr_path_append /usr/sbin /sbin /usr/local/bin /usr/local/sbin
+rr_path_append /usr/local/bin /usr/local/sbin /usr/sbin /sbin
 
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
@@ -206,6 +206,11 @@ function sidious_wakeup {
 function sidious_sleep {
   echo "Putting sidious to sleep..."
   ssh sidious -t sudo systemctl hybrid-sleep
+}
+
+function esxi_wakeup {
+  echo "Waking up ESXI host..."
+  wakeonlan -i 192.168.116.255 28:92:4a:2d:54:a3
 }
 
 # Remove exited Docker containers
