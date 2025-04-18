@@ -1,0 +1,70 @@
+#!/usr/bin/env zsh
+
+#######################################################
+# Setup dotfiles. Installs oh-my-zsh and vim plugins. #
+#######################################################
+
+cd $(dirname "$0")
+
+is_mac=false
+installing_ohmyzsh=false
+
+if [ `uname` = 'Darwin' ]; then
+  is_mac=true
+fi
+
+skipped=(.git .config .gitignore .oh-my-zsh .DS_Store)
+
+# Install oh-my-zsh
+if [ -d "$HOME/.oh-my-zsh" ]; then
+  echo "oh-my-zsh already installed"
+else
+  installing_ohmyzsh=true
+  git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh" &
+  omz_pid=$!
+fi
+
+# Symlink dotfiles
+for f in .*; do
+  # Skip files found in $skipped
+  (( ${skipped[(I)$f]} )) && continue
+
+  # Skip .zsh-mac if not on macOS
+  [[ "$f" = '.zsh-mac' && $is_mac = false ]] && continue
+
+  echo "$f -> $HOME/$f"
+  ln -s "$f" "$HOME/$f"
+done
+
+# link git ignore
+echo ".config/git/ignore -> $HOME/.config/git/ignore"
+mkdir -p $HOME/.config/git
+ln -s .config/git/ignore "$HOME/.config/git/ignore"
+
+[ -d "$HOME/bin" ] || mkdir "$HOME/bin"
+
+# install utils
+for f in util/*; do
+  n=$(basename "$f")
+
+  [[ "crontab" = "$n" ]] && continue
+
+  echo "$f -> $HOME/bin/$n"
+  ln -s "$f" "$HOME/bin/$n"
+done
+
+if [[ $is_mac = true ]]; then
+  mv "$HOME/.gitconfig-mac" "$HOME/.gitconfig"
+else
+  rm "$HOME/.gitconfig-mac"
+fi
+
+# Install vim plugins
+if (( $+commands[ruby] )); then
+  util/vipack install
+else
+  echo "ruby is missing. Install it and then run `vipack install` to install plugins."
+fi
+
+# Don't exit until oh-my-zsh has been cloned
+$installing_ohmyzsh && wait $omz_pid

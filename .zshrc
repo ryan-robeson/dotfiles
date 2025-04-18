@@ -2,7 +2,7 @@
 ZSH=$HOME/.oh-my-zsh
 
 # Change zsh custom dir so upgrades work
-ZSH_CUSTOM=$ZSH/my-custom
+ZSH_CUSTOM=$HOME/src/dotfiles/.oh-my-zsh/custom
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
