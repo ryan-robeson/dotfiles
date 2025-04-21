@@ -1,24 +1,12 @@
 export DISABLE_AUTO_TITLE=true
 
-export HOMEBREW_ROOT=/usr/local
+export HOMEBREW_ROOT=$(brew --prefix)
 export HOMEBREW_CACHE=$(brew --cache)
 export HOMEBREW_NO_INSTALL_CLEANUP=1 # handled in crontab
 export HOMEBREW_AUTO_UPDATE_SECS=$((6 * 60 * 60)) # 6 hours
 
 export CFLAGS="-I$HOMEBREW_ROOT/include"
 export LDFLAGS="-L$HOMEBREW_ROOT/lib"
-
-rr_path_prepend /usr/local/heroku/bin
-
-# Add homebrew'd stuff to the path.
-# rr_path_prepend $HOMEBREW_ROOT/bin $HOMEBREW_ROOT/sbin
-#
-# TODO: Go back to manually specifying the PATH.  For the most part, PATH
-# manipulation functions make things too complicated.
-# Or perhaps they're truly the answer? 20240820
-#export PATH=/usr/local/share/dotnet:$HOME/.dotnet/tools:/Library/Apple/usr/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:$PATH
-
-rr_path_prepend /usr/local/share/dotnet $HOME/.dotnet/tools /Library/Apple/usr/bin $HOMEBREW_ROOT/bin $HOMEBREW_ROOT/sbin
 
 # Add homebrew'd stuff to the manpath.
 rr_path_like_prepend MANPATH $HOMEBREW_ROOT/share/man
@@ -37,16 +25,10 @@ alias mjpegtrans="$HOMEBREW_ROOT/opt/mozjpeg/bin/jpegtrans"
 rr_activate_nodenv
 rr_activate_rbenv
 
-rr_path_append /usr/X11/bin /Library/Tex/texbin
-
 # Add Adobe Font Development Tools to PATH
 export FDK_EXE="$HOME/bin/FDK/Tools/osx"
-rr_path_append $FDK_EXE
 
-# Add binaries from `pip3 install --user ...` to the path.
-rr_path_append $HOME/Library/Python/3.7/bin
-
-rr_path_append $HOME/.docker/bin
+export PATH=$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.nodenv/shims:$HOME/.nodenv/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
 
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 
