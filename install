@@ -33,13 +33,13 @@ for f in .*; do
   [[ "$f" = '.zsh-mac' && $is_mac = false ]] && continue
 
   echo "$f -> $HOME/$f"
-  ln -s "$f" "$HOME/$f"
+  ln -sf `pwd`/"$f" "$HOME/$f"
 done
 
 # link git ignore
 echo ".config/git/ignore -> $HOME/.config/git/ignore"
 mkdir -p $HOME/.config/git
-ln -s .config/git/ignore "$HOME/.config/git/ignore"
+ln -sf `pwd`/.config/git/ignore "$HOME/.config/git/ignore"
 
 [ -d "$HOME/bin" ] || mkdir "$HOME/bin"
 
@@ -50,7 +50,7 @@ for f in util/*; do
   [[ "crontab" = "$n" ]] && continue
 
   echo "$f -> $HOME/bin/$n"
-  ln -s "$f" "$HOME/bin/$n"
+  ln -sf `pwd`/"$f" "$HOME/bin/$n"
 done
 
 if [[ $is_mac = true ]]; then
@@ -61,10 +61,12 @@ fi
 
 # Install vim plugins
 if (( $+commands[ruby] )); then
-  util/vipack install
+  ./util/vipack install
 else
   echo "ruby is missing. Install it and then run `vipack install` to install plugins."
 fi
 
 # Don't exit until oh-my-zsh has been cloned
 $installing_ohmyzsh && wait $omz_pid
+
+exit 0
