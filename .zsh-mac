@@ -22,13 +22,12 @@ alias mcjpeg="$HOMEBREW_ROOT/opt/mozjpeg/bin/cjpeg"
 alias mdjpeg="$HOMEBREW_ROOT/opt/mozjpeg/bin/djpeg"
 alias mjpegtrans="$HOMEBREW_ROOT/opt/mozjpeg/bin/jpegtrans"
 
-rr_activate_nodenv
-rr_activate_rbenv
-
 # Add Adobe Font Development Tools to PATH
 export FDK_EXE="$HOME/bin/FDK/Tools/osx"
 
-export PATH=$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.nodenv/shims:$HOME/.nodenv/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
+# The oh-my-zsh asdf plugin prepends the shim PATH automatically
+export ASDF_FORCE_PREPEND=no # This probably isn't needed.
+export PATH=/Library/Apple/usr/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
 
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 

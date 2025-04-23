@@ -55,66 +55,6 @@ rr_path_prepend() {
   rr_path_like_prepend PATH "$@"
 }
 
-rr_activate_rbenv() {
-  if [[ ! -d $RBENV_ROOT ]]; then
-    return
-  fi
-
-  # Setup rbenv
-  rr_path_prepend $RBENV_ROOT/bin
-
-  # Manually initialize rbenv to avoid issues with duplicate PATH entries
-  # and/or initialization problems when run multiple times (e.g. exec $SHELL)
-  rr_path_prepend $RBENV_ROOT/shims
-  export RBENV_SHELL=zsh
-
-  rbenv() {
-    local command
-    command="${1:-}"
-    if [ "$#" -gt 0 ]; then
-      shift
-    fi
-
-    case "$command" in
-    rehash|shell)
-      eval "$(rbenv "sh-$command" "$@")";;
-    *)
-      command rbenv "$command" "$@";;
-    esac
-  }
-}
-
-rr_activate_nodenv() {
-  if [[ ! -d $HOME/.nodenv ]]; then
-    return
-  fi
-
-  # Setup Nodenv
-  rr_path_prepend $HOME/.nodenv/bin
-
-  # Manually initialize nodenv to avoid issues with duplicate PATH entries
-  # and/or initialization problems when run multiple times (e.g. exec $SHELL)
-  rr_path_prepend $HOME/.nodenv/shims
-  export NODENV_SHELL=zsh
-
-  nodenv() {
-    local command
-    command="${1:-}"
-    if [ "$#" -gt 0 ]; then
-      shift
-    fi
-
-    case "$command" in
-    rehash|shell)
-      eval "$(nodenv "sh-$command" "$@")";;
-    *)
-      command nodenv "$command" "$@";;
-    esac
-  }
-}
-
-export RBENV_ROOT=$HOME/.rbenv
-
 export GOPATH=$HOME/Code/go
 
 export EDITOR=/usr/bin/vim
@@ -126,16 +66,32 @@ rr_path_append /usr/local/bin /usr/local/sbin /usr/sbin /sbin
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
-# These activations are duplicated in .zsh-mac to setup the proper PATH order.
-# They are idempotent.
-rr_activate_nodenv
-rr_activate_rbenv
-
 rr_path_append $HOME/bin
 
 rr_path_append $GOPATH/bin
 
 alias gloga='git log --decorate --oneline --graph --all'
+
+# Add support for asdf set -s (ruby|nodejs|...) $VERSION
+# that works similarly to rbenv shell. Calling without $VERSION
+# reverts to the version specified in the nearest .tool-versions.
+asdf() {
+  if [[ $1 == "shell" ]]; then
+    shift
+    echo "Not supported. Try \`asdf set -s $@\` instead"
+    return 1
+  fi
+
+  if [[ $1 == "set" && $2 == "-s" && -n $3 ]]; then
+    if [[ -n $4 ]]; then
+      export "ASDF_${(U)3}_VERSION=$4"
+    else
+      unset "ASDF_${(U)3}_VERSION"
+    fi
+  else
+    command asdf "$@"
+  fi
+}
 
 function update_xbmc_library {
   curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://localhost:8080/jsonrpc

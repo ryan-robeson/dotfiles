@@ -9,12 +9,25 @@ typeset -A _OMZ_CACHE _OMZ_CACHE_EXPIRATIONS
 () {
   local PR_USER PR_PROMPT PR_HOST IS_SSH
 
-  # Custom rbenv_prompt_info
+  # Custom ruby_prompt_info
   if [[ "function" = ${(M)$( whence -w rbenv ):#function} ]]; then
     # rbenv is already loaded
 
-    function rbenv_prompt_info() {
+    function ruby_prompt_info() {
       echo "${ZSH_THEME_RUBY_PROMPT_PREFIX}$(rbenv version-name)${ZSH_THEME_RUBY_PROMPT_SUFFIX}"
+    }
+
+  elif (( $+commands[asdf] )); then
+    # asdf is available
+    function ruby_prompt_info() {
+      current=$(asdf current --no-header ruby)
+      version=$(echo "$current" | cut -f2 -w)
+      installed=""
+      if [[ $(echo "$current" | cut -f4 -w) != "true" ]]; then
+        # show a ? when version not installed
+        installed="?"
+      fi
+      echo "${ZSH_THEME_RUBY_PROMPT_PREFIX}${version}${installed}${ZSH_THEME_RUBY_PROMPT_SUFFIX}"
     }
   fi
 
@@ -117,7 +130,7 @@ typeset -A _OMZ_CACHE _OMZ_CACHE_EXPIRATIONS
   #PROMPT="╭─${user_host} ${current_dir} ${rvm_ruby} ${git_branch} ${boot2docker_running}
   #PROMPT="╭─${user_host} ${current_dir} ${rvm_ruby} ${git_branch}
   #PROMPT="╭─${user_host} ${current_dir} \$(rbenv_prompt_info) ${git_branch} ${keyboard_battery}
-  PROMPT="╭─${user_host} ${current_dir}\$(rbenv_prompt_info)${git_branch}%-30(l.${keyboard_battery}.)
+  PROMPT="╭─${user_host} ${current_dir}\$(ruby_prompt_info)${git_branch}%-30(l.${keyboard_battery}.)
 ╰─$PR_PROMPT "
   RPS1="%@ ${return_code}"
 

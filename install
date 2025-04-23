@@ -66,6 +66,8 @@ else
   echo "ruby is missing. Install it and then run `vipack install` to install plugins."
 fi
 
+zsh -c "asdf plugin add ruby && asdf plugin add nodejs"
+
 # Don't exit until oh-my-zsh has been cloned
 $installing_ohmyzsh && wait $omz_pid
 
