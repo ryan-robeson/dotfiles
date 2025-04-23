@@ -66,7 +66,40 @@ else
   echo "ruby is missing. Install it and then run `vipack install` to install plugins."
 fi
 
-zsh -c "asdf plugin add ruby && asdf plugin add nodejs"
+if (( ! $+commands[asdf] )); then
+  # Install latest release of asdf
+  pushd ..
+
+  if [ ! -d asdf ]; then
+    echo "Installing asdf from source"
+    # Clone for the first time
+    git clone https://github.com/asdf-vm/asdf.git
+  fi
+
+  pushd asdf
+  latest_tag=$(git tag --sort=version:refname | tail -n 1)
+  git checkout "$latest_tag"
+  echo "Installing asdf to ~/bin. Make sure it's in your PATH."
+  make build && mv asdf ~/bin/
+  popd
+
+  popd
+elif [ -d ../asdf/.git ]; then
+  # asdf was built from source, so check for updates
+  pushd ../asdf
+  git fetch
+  latest_tag=$(git tag --sort=version:refname | tail -n 1)
+  if [[ ! $(git describe --exact-match --tags HEAD 2>/dev/null) == $latest_tag ]]; then
+    # We're not on the latest tag, so check it out and update
+    echo "Updating asdf to $latest_tag..."
+    git checkout "$latest_tag"
+    echo "Installing asdf to ~/bin. Make sure it's in your PATH."
+    make build && mv asdf ~/bin/
+  fi
+  popd
+fi
+
+zsh -c "asdf plugin add ruby >/dev/null && asdf plugin add nodejs >/dev/null"
 
 # Don't exit until oh-my-zsh has been cloned
 $installing_ohmyzsh && wait $omz_pid
