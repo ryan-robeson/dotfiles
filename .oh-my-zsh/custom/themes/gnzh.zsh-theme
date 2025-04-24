@@ -21,9 +21,9 @@ typeset -A _OMZ_CACHE _OMZ_CACHE_EXPIRATIONS
     # asdf is available
     function ruby_prompt_info() {
       current=$(asdf current --no-header ruby)
-      version=$(echo "$current" | cut -f2 -w)
+      version=$(echo "$current" | awk '{print $2}')
       installed=""
-      if [[ $(echo "$current" | cut -f4 -w) != "true" ]]; then
+      if [[ $(echo "$current" | awk '{print $4}') != "true" ]]; then
         # show a ? when version not installed
         installed="?"
       fi
