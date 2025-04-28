@@ -7,3 +7,5 @@
 .oh-my-zsh/custom/plugins/example*
 *.log
 .vim/.netrwhist
+.emacs.d/*
+!.emacs.d/init.el

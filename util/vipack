@@ -8,6 +8,9 @@ require 'open3'
 require 'pathname'
 require 'set'
 
+# TODO: Automate running ':helptags' for each plugin installed
+#       E.g. Inside Vim it's called like `:helptags ~/.vim/pack/vipack/start/slimv/doc`
+
 # List of plugins.
 # See spec_to_path for formats.
 # This list will be merged with plugin declarations from .vimrc.
