@@ -99,7 +99,10 @@ elif [ -d ../asdf/.git ]; then
   popd
 fi
 
-zsh -c "asdf plugin add ruby >/dev/null && asdf plugin add nodejs >/dev/null"
+zsh -c "asdf plugin add ruby >/dev/null && asdf plugin add nodejs >/dev/null && asdf plugin add erlang >/dev/null && asdf plugin add elixir >/dev/null"
+
+echo "To install erlang:"
+echo 'CFLAGS="-I/usr/local/include -O2 -g" KERL_CONFIGURE_OPTIONS="--without-javac" asdf install erlang latest'
 
 # Don't exit until oh-my-zsh has been cloned
 $installing_ohmyzsh && wait $omz_pid

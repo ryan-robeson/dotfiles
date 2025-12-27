@@ -27,7 +27,14 @@ export FDK_EXE="$HOME/bin/FDK/Tools/osx"
 
 # The oh-my-zsh asdf plugin prepends the shim PATH automatically
 export ASDF_FORCE_PREPEND=no # This probably isn't needed.
-export PATH=/Library/Apple/usr/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
+export PATH=/Library/Apple/usr/bin:/usr/local/opt/rustup/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
+
+# TODO: See if there's a better way to set this up that still works with ElixirLS
+#       As mentioned above, this seems redundant with the oh-my-zsh asdf plugin,
+#       but that isn't getting loaded due to not loading oh-my-zsh in VSCode.
+#       However, TERM_PROGRAM isn't set when ElixirLS runs launch.sh, so I don't
+#       see a way to make this conditional. This doesn't actually hurt anything.
+export PATH=$HOME/.asdf/shims:$PATH
 
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 

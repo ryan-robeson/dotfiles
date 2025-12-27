@@ -36,8 +36,12 @@ plugins=(git ruby bundler macos docker osx-bluetooth-keyboard zsh-prompt-benchma
 
 DEFAULT_USER="ryan"
 
-# Customize to your needs...
-source $ZSH/oh-my-zsh.sh
+# Don't load oh-my-zsh if running under vscode
+if [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  source $ZSH/oh-my-zsh.sh
+else
+  autoload -Uz compinit && compinit
+fi
 
 HISTSIZE=100000
 SAVEHIST=$HISTSIZE
