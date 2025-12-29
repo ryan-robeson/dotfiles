@@ -1,74 +1,22 @@
 # This file can be sourced multiple times (e.g. tmux).
 # Watch out for side effects.
 
-# Append to a PATH-like variable without duplicates (including symlinks) or
-# empty directories.
-# Usage: rr_path_like_append PATHLIKEVAR DIR...
-#
-# Based on https://unix.stackexchange.com/a/480523 with modifications for
-# supporting any PATH-like variable and preventing duplicate symlinks in PATH
-# (initial version assumed only realpaths in PATH).
-rr_path_like_append() {
-  local dirname
-  local varname=$1
-  shift 1
-
-  for dirname in "${@}"; do
-    dirname="${dirname%/}"
-    [[ "${dirname:0:1}" == '/' &&
-      ":${(P)varname}:" != *":${dirname}:"* &&
-      ":${(P)varname}:" != *":${dirname:A}:"* &&
-      -d "${dirname}" ]] || continue
-    eval ${varname}=\"${(P)varname}:${dirname}\"
-  done
-  eval ${varname}="${(P)varname#:}"
-  export ${varname}
-}
-
-# Prepend to a PATH-like variable without duplicates (including symlinks) or
-# empty directories.
-# Usage: rr_path_like_prepend PATHLIKEVAR DIR...
-rr_path_like_prepend() {
-  local dirname
-  local varname=$1
-  shift 1
-
-  for dirname in "${@}"; do
-    dirname="${dirname%/}"
-    [[ "${dirname:0:1}" == '/' &&
-      ":${(P)varname}:" != *":${dirname}:"* &&
-      ":${(P)varname}:" != *":${dirname:A}:"* &&
-      -d "${dirname}" ]] || continue
-    eval ${varname}=\"${dirname}:${(P)varname}\"
-  done
-  eval ${varname}="${(P)varname#:}"
-  export ${varname}
-}
-
-# Append to path without duplicates (including symlinks) or empty directories.
-rr_path_append() {
-  rr_path_like_append PATH "$@"
-}
-
-# Prepend to path without duplicates (including symlinks) or empty directories.
-rr_path_prepend() {
-  rr_path_like_prepend PATH "$@"
-}
-
 export GOPATH=$HOME/Code/go
 
 export EDITOR=/usr/bin/vim
 
 fpath=( $HOME/.oh-my-zsh/custom/completions $fpath )
 
-rr_path_append /usr/local/bin /usr/local/sbin /usr/sbin /sbin
+# Append to path, removing duplicates
+typeset -U path
+path+=(/usr/local/bin /usr/local/sbin /usr/sbin /sbin)
 
 # Source mac environment settings if available.
 [ -f $HOME/.zsh-mac ] && source $HOME/.zsh-mac
 
-rr_path_append $HOME/bin
+path+=($HOME/bin)
 
-rr_path_append $GOPATH/bin
+path+=($GOPATH/bin)
 
 alias gloga='git log --decorate --oneline --graph --all'
 

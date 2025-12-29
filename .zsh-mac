@@ -1,5 +1,9 @@
 export DISABLE_AUTO_TITLE=true
 
+if [[ `uname -m` == "arm64" ]]; then
+  path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+fi
+
 export HOMEBREW_ROOT=$(brew --prefix)
 export HOMEBREW_CACHE=$(brew --cache)
 export HOMEBREW_NO_INSTALL_CLEANUP=1 # handled in crontab
@@ -9,7 +13,8 @@ export CFLAGS="-I$HOMEBREW_ROOT/include"
 export LDFLAGS="-L$HOMEBREW_ROOT/lib"
 
 # Add homebrew'd stuff to the manpath.
-rr_path_like_prepend MANPATH $HOMEBREW_ROOT/share/man
+typeset -U manpath
+manpath=($HOMEBREW_ROOT/share/man $manpath)
 
 # Allow bundler to use all the cores for parallel installation
 export BUNDLE_JOBS=4
@@ -27,14 +32,64 @@ export FDK_EXE="$HOME/bin/FDK/Tools/osx"
 
 # The oh-my-zsh asdf plugin prepends the shim PATH automatically
 export ASDF_FORCE_PREPEND=no # This probably isn't needed.
-export PATH=/Library/Apple/usr/bin:/usr/local/opt/rustup/bin:/usr/local/share/dotnet:/usr/local/heroku/bin:$HOMEBREW_ROOT/bin:$HOMEBREW_ROOT/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Tex/texbin:$HOME/bin/FDK/Tools/osx:$HOME/Library/Python/3.7/bin:$HOME/.docker/bin:$HOME/bin:$HOME/Code/go/bin
+
+# Set PATH for non-arm64 systems
+if [[ `uname -m` != "arm64" ]]; then
+  path=(
+    /Library/Apple/usr/bin
+    /usr/local/opt/rustup/bin
+    /usr/local/share/dotnet
+    /usr/local/heroku/bin
+    $HOMEBREW_ROOT/bin
+    $HOMEBREW_ROOT/sbin
+    /usr/bin
+    /bin
+    /usr/sbin
+    /sbin
+    /Library/Tex/texbin
+    $HOME/bin/FDK/Tools/osx
+    $HOME/Library/Python/3.7/bin
+    $HOME/.docker/bin
+    $HOME/bin
+    $HOME/Code/go/bin
+  )
+fi
 
 # TODO: See if there's a better way to set this up that still works with ElixirLS
 #       As mentioned above, this seems redundant with the oh-my-zsh asdf plugin,
 #       but that isn't getting loaded due to not loading oh-my-zsh in VSCode.
 #       However, TERM_PROGRAM isn't set when ElixirLS runs launch.sh, so I don't
 #       see a way to make this conditional. This doesn't actually hurt anything.
-export PATH=$HOME/.asdf/shims:$PATH
+path=($HOME/.asdf/shims $path)
+
+# Set PATH differently on arm64
+if [[ `uname -m` == "arm64" ]]; then
+  path=(
+    $HOME/.asdf/shims
+    /usr/local/opt/rustup/bin
+    /usr/local/share/dotnet
+    /usr/local/heroku/bin
+    $HOMEBREW_ROOT/bin
+    $HOMEBREW_ROOT/sbin
+    /usr/local/bin
+    /System/Cryptexes/App/usr/bin
+    /usr/bin
+    /bin
+    /usr/sbin
+    /sbin
+    /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin
+    /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin
+    /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+    /opt/pmk/env/global/bin
+    /Library/Tex/texbin
+    $HOME/bin/FDK/Tools/osx
+    $HOME/Library/Python/3.7/bin
+    $HOME/.docker/bin
+    $HOME/bin
+    $HOME/Code/go/bin
+)
+
+fi
 
 export EDITOR=$HOMEBREW_ROOT/bin/vim
 
