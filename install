@@ -13,7 +13,7 @@ if [ `uname` = 'Darwin' ]; then
   is_mac=true
 fi
 
-skipped=(.git .config .gitignore .oh-my-zsh .DS_Store)
+skipped=(.git .config .gitignore .oh-my-zsh .DS_Store .ssh)
 
 # Install oh-my-zsh
 if [ -d "$HOME/.oh-my-zsh" ]; then
@@ -35,6 +35,11 @@ for f in .*; do
   echo "$f -> $HOME/$f"
   ln -sf `pwd`/"$f" "$HOME/$f"
 done
+
+# link .ssh/config
+echo ".ssh/config -> $HOME/.ssh/config"
+ln -sf `pwd`/.ssh/config "$HOME/.ssh/config"
+
 
 # link git ignore
 echo ".config/git/ignore -> $HOME/.config/git/ignore"
