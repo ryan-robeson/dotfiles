@@ -19,9 +19,6 @@ manpath=($HOMEBREW_ROOT/share/man $manpath)
 # Allow bundler to use all the cores for parallel installation
 export BUNDLE_JOBS=4
 
-# Make all the fancy `hub` shortcuts available via `git`.
-alias git=hub
-
 alias ql='qlmanage -p'
 alias mcjpeg="$HOMEBREW_ROOT/opt/mozjpeg/bin/cjpeg"
 alias mdjpeg="$HOMEBREW_ROOT/opt/mozjpeg/bin/djpeg"
